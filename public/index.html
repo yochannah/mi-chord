@@ -3,12 +3,10 @@
 <html lang="en">
   <head>
     <meta charset='utf-8'>
+    <link rel="stylesheet" type="text/css" href="css/circle.css">
     <script src="vendor/jquery/dist/jquery.min.js"></script>
   </head>
-  <body><script id="__bs_script__">//<![CDATA[
-    document.write("<script async src='/browser-sync/browser-sync-client.js?v=2.18.2'><\/script>".replace("HOST", location.hostname));
-//]]></script>
-
+  <body>
 
     <div id="target"></div>
 
@@ -21,9 +19,12 @@
       var model;
 
       $.get( "json/EBI-9082861.json", function( data ) {
-        model = new MIModel(data);
-        circle = new Circle({el: "#target", data: 123});
-        console.log("circle", circle);
+
+        new MIModel(data).load().then(function(m) {
+          circle = new Circle("#target", m);
+          console.log("circle", circle);
+        });
+
       });
 
     </script>

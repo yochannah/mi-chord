@@ -8,12 +8,18 @@ var watchify = require('watchify');
 var browserSync = require('browser-sync').create()
 var coffee = require('gulp-coffee');
 
+var minify = require('gulp-minify');
+
+
+
+var less = require('gulp-less');
+var path = require('path');
 
 
 function compile(watch) {
 
   // var bundler = watchify(browserify('./src/index.js', {debug: true, standalone: 'MIModel'}).transform(babel));
-  var bundler = watchify(browserify('./js/main.js', {debug: true, standalone: 'Circle'}));
+  var bundler = watchify(browserify('./js/index.js', {debug: true, standalone: 'Circle'}));
 
   function rebundle() {
     bundler.bundle()
@@ -52,6 +58,8 @@ gulp.task('browser-sync', function() {
             baseDir: "./public"
         }
     });
+
+    gulp.watch("public/*.html").on('change', browserSync.reload);
 });
 
 gulp.task('coffee', function() {
@@ -60,23 +68,39 @@ gulp.task('coffee', function() {
     .pipe(gulp.dest('./js/'));
 });
 
-gulp.task('watch-coffee', function() {
-  gulp.watch("src/**/*.coffee", ['coffee', 'build']);
+gulp.task('less', function () {
+  return gulp.src('./less/**/*.less')
+    .pipe(less({
+      paths: [ path.join(__dirname, 'less', 'includes') ]
+    }))
+    .pipe(gulp.dest('./public/css'))
+    .pipe(browserSync.stream());
 });
 
-// gulp.task('templates', function() {
-//   gulp.src("./templates/*.mustache")
-//       .pipe(mustache({
-//           msg: "Hello Gulp!"
-//       }))
-//       .pipe(gulp.dest("./dist"));
-// })
+gulp.task('watch-coffee', function() {
+  gulp.watch("src/**/*.coffee", ['coffee', 'build']);
+  gulp.watch("src/**/*.hbs", ['templates', 'build']);
+  gulp.watch("less/**/*.less", ['less']);
 
+});
+
+gulp.task('compress', function() {
+  gulp.src('public/dist/circle.js')
+    .pipe(minify({
+        ext:{
+            src:'-debug.js',
+            min:'.js'
+        },
+        exclude: ['tasks'],
+        ignoreFiles: ['.combo.js', '-min.js']
+    }))
+    .pipe(gulp.dest('dist'))
+});
 
 
 gulp.task('build', function() { return compile(); });
 gulp.task('watch', function() { return watch(); });
 
-gulp.task('default', ['watch-coffee', 'watch', 'browser-sync']);
+gulp.task('default', ['coffee', 'watch-coffee', 'watch', 'browser-sync']);
 
 // gulp.task('default', ['watch-coffee', 'watch', 'browser-sync']);
