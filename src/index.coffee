@@ -1,6 +1,6 @@
 React = require 'react'
 ReactDOM = require 'react-dom'
-SVG = React.createFactory require './svg'
+SVG = React.createFactory require './components/svg'
 
 class Main
 
