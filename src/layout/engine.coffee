@@ -1,4 +1,5 @@
 _ = require 'underscore'
+{wind} = require './utils'
 
 Engine =
 
@@ -15,6 +16,7 @@ Engine =
 
     # Place the participants around a circle with start and end angles
     views = []
+
     participants.map (p) ->
       previous = _.last views
 
@@ -23,8 +25,8 @@ Engine =
           model: p,
           view:
             radius: 200
-            startAngle: previous.view.endAngle
-            endAngle: (scale.val p.get("interactor").get("length")) + previous.view.endAngle
+            startAngle: previous.view.endAngle + 1
+            endAngle: (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 1
       else
         views.push
           model: p,
@@ -33,7 +35,7 @@ Engine =
             startAngle: 0
             endAngle: scale.val p.get("interactor").get("length")
 
-    return views
+    return wind views, (d) -> d.model.get("id")
 
   scale: ([dmin, dmax], [rmin, rmax]) -> val: (val) -> (val - rmin) / (rmax - rmin) * (dmax - dmin) + dmin
 
