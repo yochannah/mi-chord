@@ -3,8 +3,9 @@ Participant = React.createFactory require './participant'
 Engine = require '../layout/engine'
 Link = React.createFactory require './link'
 Chroma = require 'chroma-js'
+Draw = require '../layout/draw'
 
-{svg, g, text} = React.DOM
+{svg, g, text, path, defs} = React.DOM
 
 class SVG extends React.Component
 
@@ -17,6 +18,10 @@ class SVG extends React.Component
     links = interaction.get "links"
     views = Engine.layout participants
 
+    defpaths = _.values(views).map (v) ->
+      id = "tp" + v.model.get("id")
+      return path {id: id, d: Draw.textDef v.view}
+
     s = Chroma.scale('Spectral').domain([0, links.length - 1]);
 
     Participants = _.values(views).map (p) ->
@@ -27,6 +32,7 @@ class SVG extends React.Component
       return Link model: l, views: views, view: fill: s(i).hex()
 
     svg {className: "mi-chord"},
+      defs {}, defpaths
       g {style: shapeRendering: "geometricPrecision"},
         # text {}, @props.model.get("interactions").at(0).get("id")
         g {className: "participants"}, Participants

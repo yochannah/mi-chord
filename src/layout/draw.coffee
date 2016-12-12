@@ -22,6 +22,21 @@ Draw =
 
     path.join " "
 
+
+  textDef: ({startAngle, endAngle, radius}, thickness = 20) ->
+
+    {x: innerStartX, y: innerStartY} = polarToCartesian radius + 30, startAngle
+    {x: innerEndX, y: innerEndY} = polarToCartesian radius + 30, endAngle
+
+    largeArc = if endAngle - startAngle <= 180 then 0 else 1
+
+    path = [
+      "M", innerStartX, innerStartY
+      "A", radius, radius, 0, largeArc, 1, innerEndX, innerEndY
+    ]
+
+    path.join " "
+
   link: (participants) ->
 
     {startAngle, endAngle, radius} = _.first participants

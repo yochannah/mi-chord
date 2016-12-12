@@ -5,12 +5,14 @@ Region = React.createFactory require './region'
 
 {circle, g, text, path} = React.DOM
 
+
 class Participant extends React.Component
 
   constructor: (props) ->
     super(props)
 
   render: ->
+
 
     Regions = []
 
@@ -36,6 +38,7 @@ class Participant extends React.Component
     # Generate the view
     g {},
       path {className: "participant", d: Draw.arc @props.view}
+      # text {}, textPath {xlinkhref: "tp"}, "Testing"
       Regions
 
 module.exports = Participant
