@@ -31,6 +31,7 @@ class Link extends React.Component
           endAngle: scale.val s.get("end")
 
     g {className: "linkGroup"},
-      path {className: "link", opacity: "0.9", fill: @props.view.fill, d: Draw.link views}
+      path {className: "link", opacity: "0.9", d: Draw.link views}
+      # path {className: "link", opacity: "0.9", fill: @props.view.fill, d: Draw.link views}
 
 module.exports = Link

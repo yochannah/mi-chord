@@ -28,8 +28,18 @@ class SVG extends React.Component
       p.key = p.model.get("id")
       return Participant p
 
-    Links = links.map (l, i) ->
-      return Link model: l, views: views, view: fill: s(i).hex()
+    # Links = links.map (l, i) ->
+    #   return Link model: l, views: views, view: fill: s(i).hex()
+
+    Links = []
+
+    # console.log "links", links
+    #
+    # console.log "first link", links.at(0)
+
+    Links.push new Link model: links.at(0), views: views, view: fill: s(0).hex()
+
+    # Links = [Link model: links[0], views: views, view: fill: s(0).hex() ]
 
     svg {className: "mi-chord"},
       defs {}, defpaths
