@@ -18,7 +18,14 @@
       var circle;
       var model;
 
-      $.get( "json/EBI-9082861.json", function( data ) {
+      // "json/EBI-10828997.json"
+      // "json/EBI-1202920.json"
+      // "json/EBI-8869931.json"
+      // "json/EBI-9082861.json"
+      // "json/EBI-9691559.json"
+      // json/EBI-10828997.json // split
+
+      $.get( "json/EBI-10828997.json", function( data ) {
 
         new MIModel(data).load().then(function(m) {
           circle = new Circle("#target", m);

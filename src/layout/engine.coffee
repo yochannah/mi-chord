@@ -25,8 +25,8 @@ Engine =
           model: p,
           view:
             radius: 200
-            startAngle: previous.view.endAngle + 1
-            endAngle: (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 1
+            startAngle: previous.view.endAngle + 5
+            endAngle: (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 5
       else
         views.push
           model: p,

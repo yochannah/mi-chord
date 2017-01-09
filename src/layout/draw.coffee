@@ -1,14 +1,15 @@
 {polarToCartesian} = require './engine'
+ptc = polarToCartesian
 
 Draw =
 
   arc: ({startAngle, endAngle, radius}, thickness = 20) ->
 
-    {x: innerStartX, y: innerStartY} = polarToCartesian radius, startAngle
-    {x: innerEndX, y: innerEndY} = polarToCartesian radius, endAngle
+    {x: innerStartX, y: innerStartY} = ptc radius, startAngle
+    {x: innerEndX, y: innerEndY} = ptc radius, endAngle
 
-    {x: outerStartX, y: outerStartY} = polarToCartesian radius + thickness, startAngle
-    {x: outerEndX, y: outerEndY} = polarToCartesian radius + thickness, endAngle
+    {x: outerStartX, y: outerStartY} = ptc radius + thickness, startAngle
+    {x: outerEndX, y: outerEndY} = ptc radius + thickness, endAngle
 
     largeArc = if endAngle - startAngle <= 180 then 0 else 1
 
@@ -25,8 +26,8 @@ Draw =
 
   textDef: ({startAngle, endAngle, radius}, thickness = 20) ->
 
-    {x: innerStartX, y: innerStartY} = polarToCartesian radius + 30, startAngle
-    {x: innerEndX, y: innerEndY} = polarToCartesian radius + 30, endAngle
+    {x: innerStartX, y: innerStartY} = ptc radius + 30, startAngle
+    {x: innerEndX, y: innerEndY} = ptc radius + 30, endAngle
 
     largeArc = if endAngle - startAngle <= 180 then 0 else 1
 
@@ -37,63 +38,92 @@ Draw =
 
     path.join " "
 
-  end: (svgvector) ->
-    console.log "END GOT", svgvector
 
   link: (participants) ->
 
-    first = _.first participants
+    pinch = (start, end) ->
+      (end - start) * 0.4
 
-    {startAngle, endAngle, radius} = first
+    depth = 90
 
-    largeArc = if endAngle - startAngle <= 180 then 0 else 1
+    parts = []
 
-    # Use an array to store the bits of our path.
-    # Start by moving to the very beginning of the first arc.
-    parts = [
-      ["M", polarToCartesian(radius, startAngle).x, polarToCartesian(radius, startAngle).y]
+    # Sort the participants so that links between more than two regions
+    # don't cross eachother
+    participants = _.sortBy participants, "startAngle"
 
-      ["A", radius, radius, 0,
-      if endAngle - startAngle <= 180 then 0 else 1,
-      1,
-      polarToCartesian(radius, endAngle).x, polarToCartesian(radius, endAngle).y]
+    participants.map ({startAngle, endAngle, radius}, i) ->
 
-      ["C",
-        polarToCartesian(radius, endAngle).x, polarToCartesian(radius, endAngle).y
-        polarToCartesian(radius - 30, endAngle + 20).x, polarToCartesian(radius - 30, endAngle + 20).y
-        polarToCartesian(radius - 60, endAngle + 20).x, polarToCartesian(radius - 60, endAngle + 20).y]
-    ]
+      next = if (i + 1) < participants.length then participants[i + 1] else participants[0]
 
-    # Now loop through the remaining participants and link their features
-    rest = _.rest participants
+      parts.push [
 
-    @end parts.slice(-1).pop()
+        if i is 0
+          if startAngle is endAngle
+            ["M", ptc(radius, startAngle).x, ptc(radius, startAngle).y]
+          else
+            ["M",
+              ptc(radius - depth, startAngle + pinch(startAngle, endAngle)).x
+              ptc(radius - depth, startAngle + pinch(startAngle, endAngle)).y]
 
-    # @end paths.slice(-1).pop()
+        if startAngle is endAngle
+          ["C",
+            ptc(radius, startAngle).x, ptc(radius, startAngle).y
+            ptc(radius, startAngle).x, ptc(radius, startAngle).y
+            ptc(radius, startAngle).x, ptc(radius, startAngle).y]
+        else
+          ["C",
+            # Start at
+            ptc(radius - depth, startAngle + pinch(startAngle, endAngle)).x
+            ptc(radius - depth, startAngle + pinch(startAngle, endAngle)).y
+            # Curve to
+            ptc(radius - depth / 2, startAngle + pinch(startAngle, endAngle)).x
+            ptc(radius - depth / 2, startAngle + pinch(startAngle, endAngle)).y
+            # End
+            ptc(radius, startAngle).x, ptc(radius, startAngle).y]
 
-    # Loop through the remaining features
-    rest.map (p, i) ->
+        ["A", radius, radius, 0,
+          if endAngle - startAngle <= 180 then 0 else 1,
+          1, ptc(radius, endAngle).x, ptc(radius, endAngle).y]
 
-      # console.log "P", parts
+        if startAngle is endAngle
+          ["C",
+            ptc(radius, endAngle).x, ptc(radius, endAngle).y
+            ptc(radius, endAngle).x, ptc(radius, endAngle).y
+            ptc(radius, endAngle).x, ptc(radius, endAngle).y]
+        else
+          ["C",
+            ptc(radius, endAngle).x, ptc(radius, endAngle).y
+            ptc(radius - depth / 2, endAngle - pinch(startAngle, endAngle)).x
+            ptc(radius - depth / 2, endAngle - pinch(startAngle, endAngle)).y
+            ptc(radius - depth, endAngle - pinch(startAngle, endAngle)).x
+            ptc(radius - depth, endAngle - pinch(startAngle, endAngle)).y]
+
+        if next
+          if next.startAngle is next.endAngle
+            ["Q", 0, 0
+              ptc(next.radius, next.startAngle).x, ptc(next.radius, next.startAngle).y]
+          else
+            ["Q", 0, 0
+              ptc(next.radius - depth, next.startAngle + pinch(next.startAngle, next.endAngle)).x
+              ptc(next.radius - depth, next.startAngle + pinch(next.startAngle, next.endAngle)).y]
 
 
-      # {startAngle, endAngle, radius} = p
-      #
-      # parts.push ["Q",
-      # 0, 0,
-      # polarToCartesian(radius, startAngle).x, polarToCartesian(radius, startAngle).y]
-      #
-      # parts.push ["A",
-      # radius, radius, 0, largeArc, 1,
-      # polarToCartesian(radius, endAngle).x, polarToCartesian(radius, endAngle).y]
-    #
-    #
-    # {startAngle, endAngle, radius} = _.first participants
-    #
-    # # Close the path by curving back to our starting point
-    # parts.push ["Q",
-    #   0, 0,
-    #   polarToCartesian(radius, startAngle).x, polarToCartesian(radius, startAngle).y]
+
+
+
+        # if startAngle == endAngle
+        #   ["Q", 0, 0
+        #     ptc(radius, endAngle).x, ptc(radius, endAngle).y]
+        # else
+        #   ["Q", 0, 0
+        #     ptc(radius - 30, endAngle - 10).x, ptc(radius - 30, endAngle - 10).y]
+        #
+        # ["A", radius, radius, 0,
+        #   if endAngle - startAngle <= 180 then 0 else 1,
+        #   1, ptc(radius, endAngle).x, ptc(radius, endAngle).y]
+      ]
+
 
     _.flatten(parts).join " "
 
