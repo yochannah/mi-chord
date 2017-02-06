@@ -5,7 +5,6 @@ Region = React.createFactory require './region'
 
 {circle, g, text, path} = React.DOM
 
-
 class Participant extends React.Component
 
   constructor: (props) ->
@@ -23,7 +22,7 @@ class Participant extends React.Component
       scale = Engine.scale([@props.view.startAngle, @props.view.endAngle],
         [0, @props.model.get("interactor").get("length")])
 
-      f.get("sequenceData").map (s) =>
+      f.get("sequenceData")?.map (s) =>
 
         # Generate a Region component using the scaled data from the
         # current view
@@ -37,8 +36,11 @@ class Participant extends React.Component
 
     # Generate the view
     g {},
-      path {className: "participant", d: Draw.arc @props.view}
-      # text {}, textPath {xlinkhref: "tp"}, "Testing"
+      if @props.view.hasLength is true
+        path {className: "participant", d: Draw.arc @props.view}
+      else
+        circle {className: "nolenpart", r: 5 }
+      # text {}, textPath {xlinkhref: "tp"}, "Testing" # DOESNT EXIST IN REACT.DOM
       Regions
 
 module.exports = Participant

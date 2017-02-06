@@ -11,7 +11,7 @@
     <div id="target"></div>
 
     <script src="dist/circle.js"></script>
-    <script src="vendor/mi-model/dist/mi-model.js"></script>
+    <script src="mi-model.js"></script>
 
     <script>
 
@@ -25,7 +25,7 @@
       // "json/EBI-9691559.json"
       // json/EBI-10828997.json // split
 
-      $.get( "json/EBI-10828997.json", function( data ) {
+      $.get( "json/EBI-9691559.json", function( data ) {
 
         new MIModel(data).load().then(function(m) {
           circle = new Circle("#target", m);

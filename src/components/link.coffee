@@ -41,12 +41,15 @@ class Link extends React.Component
     # Walk through each feature in the link
     @props.model.get("features").map (feature) =>
 
+
       # Get the view and model for the parent participant
       {view: participantView, model: ParticipantModel} = @props.views[feature.get("participant").get("id")]
+
 
       # Create a scale so we know where to start/stop our path
       scale = Engine.scale([participantView.startAngle, participantView.endAngle],
         [0, ParticipantModel.get("interactor").get("length")])
+
 
       # Walk through each sequenceData of the feature (could be more than one)
       sequenceData = feature.get("sequenceData").map (s) ->
@@ -54,6 +57,7 @@ class Link extends React.Component
           radius: participantView.radius
           startAngle: scale.val s.get("start")
           endAngle: scale.val s.get("end")
+
 
     parsed = null
     # parsed = parser Draw.link(views)

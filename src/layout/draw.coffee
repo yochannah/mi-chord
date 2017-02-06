@@ -5,6 +5,8 @@ Draw =
 
   arc: ({startAngle, endAngle, radius}, thickness = 20) ->
 
+    # console.log "trying to arc", startAngle, endAngle, radius
+
     {x: innerStartX, y: innerStartY} = ptc radius, startAngle
     {x: innerEndX, y: innerEndY} = ptc radius, endAngle
 
@@ -25,6 +27,8 @@ Draw =
 
 
   textDef: ({startAngle, endAngle, radius}, thickness = 20) ->
+
+    # console.log "trying to text", startAngle, endAngle, radius
 
     {x: innerStartX, y: innerStartY} = ptc radius + 30, startAngle
     {x: innerEndX, y: innerEndY} = ptc radius + 30, endAngle
