@@ -26,6 +26,9 @@ Draw =
     path.join " "
 
 
+
+
+
   textDef: ({startAngle, endAngle, radius}, thickness = 20) ->
 
     # console.log "trying to text", startAngle, endAngle, radius

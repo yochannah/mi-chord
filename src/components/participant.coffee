@@ -2,8 +2,9 @@ React = require 'react'
 Engine = require '../layout/engine'
 Draw = require "../layout/draw"
 Region = React.createFactory require './region'
-
+{polarToCartesian} = require '../layout/engine'
 {circle, g, text, path} = React.DOM
+ptc = polarToCartesian
 
 class Participant extends React.Component
 
@@ -11,7 +12,6 @@ class Participant extends React.Component
     super(props)
 
   render: ->
-
 
     Regions = []
 
@@ -39,7 +39,8 @@ class Participant extends React.Component
       if @props.view.hasLength is true
         path {className: "participant", d: Draw.arc @props.view}
       else
-        circle {className: "nolenpart", r: 5 }
+        {x: cx, y: cy} = ptc @props.view.radius, @props.view.endAngle
+        circle {cx: cx, cy: cy, className: "nolenpart", r: 10 }
       # text {}, textPath {xlinkhref: "tp"}, "Testing" # DOESNT EXIST IN REACT.DOM
       Regions
 

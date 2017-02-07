@@ -17,7 +17,7 @@ Engine =
       length = p.get("interactor").get("length")
       length isnt undefined and length isnt null
 
-    molRadius = 20
+    molRadius = 12
 
 
     # Get their total
@@ -59,7 +59,7 @@ Engine =
           view:
             hasLength: true
             radius: 200
-            startAngle: 0 + 5
+            startAngle: 0
             endAngle: scale.val p.get("interactor").get("length")
 
     nolength.map (p, i) ->
@@ -70,7 +70,7 @@ Engine =
         model: p,
         view:
           hasLength: false
-          radius: 200
+          radius: 210
           startAngle: previous.view.endAngle + molRadius
           endAngle: previous.view.endAngle + molRadius
 
