@@ -88,11 +88,12 @@ gulp.task('compress', function() {
   gulp.src('public/dist/circle.js')
     .pipe(minify({
         ext:{
-            src:'-debug.js',
-            min:'.js'
+            // src:'-debug.js',
+            min:'.min.js'
         },
+        noSource: true,
         exclude: ['tasks'],
-        ignoreFiles: ['.combo.js', '-min.js']
+        ignoreFiles: ['.combo.js', '.js']
     }))
     .pipe(gulp.dest('dist'))
 });

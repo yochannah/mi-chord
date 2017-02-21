@@ -1,7 +1,7 @@
 {
-  "name": "circle",
-  "version": "0.2.0",
-  "description": "Model for representing Molecular Interaction data",
+  "name": "mi-chord",
+  "version": "0.0.1",
+  "description": "Chord diagram for representing Molecular Interaction data",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

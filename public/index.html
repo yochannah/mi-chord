@@ -22,11 +22,12 @@
       // "json/EBI-1202920.json"
       // "json/EBI-8869931.json"
       // "json/EBI-9082861.json"
-      // "json/EBI-9691559.json"
+      // "json/EBI-9691559.json" // Working
       // "json/EBI-9008420.json"
+      // "json/EBI-9008283.json"
       // json/EBI-10828997.json // split
 
-      $.get( "json/EBI-9691559.json", function( data ) {
+      $.get( "json/EBI-1202920.json", function( data ) {
 
         new MIModel(data).load().then(function(m) {
           circle = new Circle("#target", m);

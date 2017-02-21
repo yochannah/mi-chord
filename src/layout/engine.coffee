@@ -19,7 +19,6 @@ Engine =
 
     molRadius = 12
 
-
     # Get their total
     sum = _.reduce lengths, ((total, num) -> total + num), 0
 
@@ -31,15 +30,6 @@ Engine =
     views = []
 
     nolengthviews = []
-
-    # Get participants with no length
-
-
-
-
-
-    # console.log "WITHLEN", withlength
-    # console.log "NOLEN", nolength
 
     withlength.map (p) ->
 
@@ -59,7 +49,7 @@ Engine =
           view:
             hasLength: true
             radius: 200
-            startAngle: 0
+            startAngle: 1
             endAngle: scale.val p.get("interactor").get("length")
 
     nolength.map (p, i) ->
