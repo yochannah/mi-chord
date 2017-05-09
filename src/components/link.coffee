@@ -7,7 +7,6 @@ _ = require 'underscore'
 
 
 center = ([letter, values...]) ->
-  console.log "LETTER", letter, values
   switch letter
     when "M" then x: values[0], y:values[1]
     when "C" then x: values[4], y:values[5]
@@ -70,6 +69,6 @@ class Link extends React.Component
             g {className: "x"},
               circle {cx: p.x, cy: p.y, r: 5 }
               text {dx: p.x + 15, dy: p.y + 15}, p.idx
-      # path {className: "link", opacity: "0.9", fill: @props.view.fill, d: Draw.link views}
+      path {className: "link", opacity: "0.9", fill: @props.view.fill, d: Draw.link views}
 
 module.exports = Link
