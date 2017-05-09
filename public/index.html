@@ -25,10 +25,10 @@
       // "json/EBI-9691559.json"
       // json/EBI-10828997.json // split
 
-      $.get( "json/EBI-10828997.json", function( data ) {
+      $.get( "json/EBI-9082861.json", function( data ) {
 
         new MIModel(data).load().then(function(m) {
-          circle = new Circle("#target", m);
+          var circle = new Circle("#target", m);
           console.log("circle", circle);
         });
 

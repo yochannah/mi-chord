@@ -4,6 +4,7 @@ Engine = require '../layout/engine'
 Link = React.createFactory require './link'
 Chroma = require 'chroma-js'
 Draw = require '../layout/draw'
+_ = require 'underscore'
 
 {svg, g, text, path, defs} = React.DOM
 
@@ -37,9 +38,8 @@ class SVG extends React.Component
     # Links.push new Link model: links.at(0), views: views, view: fill: s(0).hex()
     # Links = [Link model: links[0], views: views, view: fill: s(0).hex() ]
 
-
     svg {className: "mi-chord"},
-      defs {}, defpaths
+      # defs {}, defpaths
       g {style: shapeRendering: "geometricPrecision"},
         # text {}, @props.model.get("interactions").at(0).get("id")
         g {className: "participants"}, Participants
