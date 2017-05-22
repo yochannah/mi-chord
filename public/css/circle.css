@@ -1,0 +1,62 @@
+body {
+  background: #d9dbdd;
+  background: white;
+  font-family: sans-serif;
+}
+.mi-chord {
+  background-color: white;
+  width: 500px;
+  height: 500px;
+}
+.participants {
+  transform: translate(250px, 250px);
+}
+.participant {
+  transition: all 150ms ease-in;
+  stroke: #3e3e3e;
+  stroke-width: 1;
+  opacity: 0.8;
+}
+.region {
+  fill: white;
+  opacity: 0.3;
+}
+.link {
+  transition: all 150ms ease-in;
+  stroke: #bebebe;
+  stroke-width: 1;
+  opacity: 0.5;
+}
+.annotation text {
+  fill: black;
+}
+.annotation circle {
+  fill: red;
+  fill-opacity: 0.2;
+  stroke: red;
+  stroke-width: 1;
+}
+.nolenpart {
+  fill: white;
+  stroke: #3e3e3e;
+  stroke-width: 1;
+  opacity: 0.8;
+}
+#dashboard {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+#dashboard li {
+  float: left;
+  transition: all 150ms ease-in;
+  border: 1px solid #d3d3d3;
+  padding: 10px;
+  margin: 10px;
+  margin-left: 0;
+  background-color: #f0f0f0;
+}
+#dashboard li:hover {
+  background-color: deepskyblue;
+  color: white;
+}

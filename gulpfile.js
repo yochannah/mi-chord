@@ -16,6 +16,39 @@ var less = require('gulp-less');
 var path = require('path');
 
 
+function compileOnce(watch) {
+
+  // var bundler = watchify(browserify('./src/index.js', {debug: true, standalone: 'MIModel'}).transform(babel));
+  var bundler = watchify(browserify('./js/index.js', {debug: true, standalone: 'Circle'}));
+
+  function rebundle() {
+    bundler.bundle()
+      .on('error', function(err) { console.error(err); this.emit('end'); })
+      .on('end', function() {
+        process.exit(0);
+      })
+      .pipe(source('circle.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({ loadMaps: true }))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest('./public/dist'))
+      .pipe(browserSync.stream({once: true}))
+      ;
+  }
+
+  console.log("WATCH", watch);
+
+  if (watch) {
+    bundler.on('update', function() {
+      console.log('-> bundling...');
+      rebundle();
+    });
+  }
+
+  rebundle();
+}
+
+
 function compile(watch) {
 
   // var bundler = watchify(browserify('./src/index.js', {debug: true, standalone: 'MIModel'}).transform(babel));
@@ -29,7 +62,8 @@ function compile(watch) {
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest('./public/dist'))
-      .pipe(browserSync.stream({once: true}));
+      .pipe(browserSync.stream({once: true}))
+      ;
   }
 
   if (watch) {
@@ -100,7 +134,11 @@ gulp.task('compress', function() {
 
 
 gulp.task('build', function() { return compile(); });
+gulp.task('buildonce', function() { return compileOnce(); });
+
 gulp.task('watch', function() { return watch(); });
+
+gulp.task('deploy', ['coffee', 'less', 'buildonce']);
 
 gulp.task('default', ['coffee', 'watch-coffee', 'watch', 'browser-sync']);
 
