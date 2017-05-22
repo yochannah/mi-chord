@@ -8,7 +8,7 @@ SVG = React.createFactory(require('./components/svg'));
 
 Main = (function() {
   function Main(target, model) {
-    console.debug("Using model", model);
+    console.log("Using model", model);
     ReactDOM.render(SVG({
       model: model
     }), document.getElementById("target"));

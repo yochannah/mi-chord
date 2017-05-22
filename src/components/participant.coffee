@@ -6,10 +6,45 @@ Region = React.createFactory require './region'
 {circle, g, text, path} = React.DOM
 ptc = polarToCartesian
 
+BackboneMixin =
+
+  componentDidMount: ->
+    # Whenever there may be a change in the Backbone data, trigger a reconcile.
+    console.log "my model", @props.model
+
+    @props.model.on 'add change remove', @forceUpdate.bind(this, null), this
+
+  componentWillUnmount: ->
+    # Ensure that we clean up any dangling references when the component is
+    # destroyed.
+    @getBackboneModels().forEach ((model) ->
+      model.off null, null, this
+      return
+    ), this
+    return
+
+
 class Participant extends React.Component
 
   constructor: (props) ->
     super(props)
+
+  componentDidMount: ->
+    # Whenever there may be a change in the Backbone data, trigger a reconcile.
+
+    @props.model.on 'add change remove', @forceUpdate.bind(this, null), this
+
+  componentWillUnmount: ->
+    # Ensure that we clean up any dangling references when the component is
+    # destroyed.
+    @getBackboneModels().forEach ((model) ->
+      model.off null, null, this
+      return
+    ), this
+    return
+
+  focusMe: (bool) =>
+    @props.model.set focus: bool
 
   render: ->
 
@@ -37,7 +72,12 @@ class Participant extends React.Component
     # Generate the view
     g {},
       if @props.view.hasLength is true
-        path {className: "participant", d: Draw.arc @props.view}
+        path
+          fill: if @props.model.get("focus") is true then "deepskyblue" else "#a8a8a8"
+          onMouseEnter: => @focusMe true
+          onMouseLeave: => @focusMe false
+          className: "participant",
+          d: Draw.arc @props.view
       else
         {x: cx, y: cy} = ptc @props.view.radius, @props.view.endAngle
         circle {cx: cx, cy: cy, className: "nolenpart", r: 10 }

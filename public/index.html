@@ -9,6 +9,11 @@
   <body>
 
     <div id="target"></div>
+    <div>
+      <h4>Test Dashboard</h4>
+      <p>Hover over a participant to highlight its view in the chord diagram</p>
+      <ul id="dashboard"></div>
+    </div>
 
     <script src="dist/circle.js"></script>
     <script src="vendor/mi-model/dist/mi-model.js"></script>
@@ -27,10 +32,42 @@
       // "json/EBI-9008283.json"
       // json/EBI-10828997.json // split
 
+      var buildDashboard = function(model) {
 
+
+        var db = $("#dashboard");
+
+        model.get("interactions").at(0).get("participants").map(function (p) {
+
+          var focusOn = function(m) {
+            return function(event) {
+              m.set("focus", true);
+            }
+          }
+
+          var focusOff = function(m) {
+            return function(event) {
+              m.set("focus", false);
+            }
+          }
+
+          var li = $("<li></li>");
+          li.text(p.get("interactor").get("label"));
+          li.hover(focusOn(p), focusOff(p));
+          $("#dashboard").append(li);
+
+        });
+
+
+
+      }
+
+      // Actually code to load mi-circle
       $.get( "json/EBI-9082861.json", function( data ) {
         new MIModel(data).load().then(function(m) {
           var circle = new Circle("#target", m);
+          window.m = m;
+          buildDashboard(m);
           console.log("circle", circle);
         });
       });

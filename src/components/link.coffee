@@ -33,6 +33,25 @@ class Link extends React.Component
   constructor: (props) ->
     super(props)
 
+  componentDidMount: ->
+    # Whenever there may be a change in the Backbone data, trigger a reconcile.
+
+    @props.model.on 'add change remove', @forceUpdate.bind(this, null), this
+
+  componentWillUnmount: ->
+    # Ensure that we clean up any dangling references when the component is
+    # destroyed.
+    @getBackboneModels().forEach ((model) ->
+      model.off null, null, this
+      return
+    ), this
+    return
+
+  focusParticipants: (bool) =>
+    @props.model.set focus: bool
+    @props.model.get("features").map (f) ->
+      f.get("participant").set focus: bool
+
   render: ->
 
     views = []
@@ -61,14 +80,23 @@ class Link extends React.Component
     parsed = null
     # parsed = parser Draw.link(views)
 
-    g {className: "linkGroup"},
-      path {className: "link", d: Draw.link views}
-      if parsed
-        g {className: "annotation"},
-          _.map parsed, (p) ->
-            g {className: "x"},
-              circle {cx: p.x, cy: p.y, r: 5 }
-              text {dx: p.x + 15, dy: p.y + 15}, p.idx
-      path {className: "link", opacity: "0.9", fill: @props.view.fill, d: Draw.link views}
+
+    g
+      className: "linkGroup"
+      onMouseOver: => @focusParticipants true
+      onMouseLeave: => @focusParticipants false
+      # path {className: "link", d: Draw.link views}
+      # if parsed
+      #   g {className: "annotation"},
+      #     _.map parsed, (p) ->
+      #       g {className: "x"},
+      #         circle {cx: p.x, cy: p.y, r: 5 }
+      #         text {dx: p.x + 15, dy: p.y + 15}, p.idx
+      path
+        className: "link"
+        opacity: "0.9"
+        fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
+        d: Draw.link views
+        style: opacity: 0.8
 
 module.exports = Link

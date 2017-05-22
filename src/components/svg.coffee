@@ -19,7 +19,6 @@ class SVG extends React.Component
     links = interaction.get "links"
     views = Engine.layout participants
 
-
     # defpaths = _.values(views).map (v) ->
     #   id = "tp" + v.model.get("id")
     #   return path {key: id, id: id, d: Draw.textDef v.view}
@@ -34,9 +33,7 @@ class SVG extends React.Component
     Links = links.map (l, i) ->
       return Link model: l, views: views, view: fill: s(i).hex()
 
-    # console.log "LINKS", links
-
-    # Links = Links.slice 1, 2
+    # Links = Links.slice 0, 3
 
     # Links = []
     # Links.push new Link model: links.at(0), views: views, view: fill: s(0).hex()

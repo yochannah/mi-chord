@@ -1,5 +1,6 @@
 var Draw, Engine, Link, React, _, center, circle, g, parser, path, ref, text,
   slice = [].slice,
+  bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -63,8 +64,30 @@ Link = (function(superClass) {
   extend(Link, superClass);
 
   function Link(props) {
+    this.focusParticipants = bind(this.focusParticipants, this);
     Link.__super__.constructor.call(this, props);
   }
+
+  Link.prototype.componentDidMount = function() {
+    return this.props.model.on('add change remove', this.forceUpdate.bind(this, null), this);
+  };
+
+  Link.prototype.componentWillUnmount = function() {
+    this.getBackboneModels().forEach((function(model) {
+      model.off(null, null, this);
+    }), this);
+  };
+
+  Link.prototype.focusParticipants = function(bool) {
+    this.props.model.set({
+      focus: bool
+    });
+    return this.props.model.get("features").map(function(f) {
+      return f.get("participant").set({
+        focus: bool
+      });
+    });
+  };
 
   Link.prototype.render = function() {
     var parsed, views;
@@ -85,28 +108,25 @@ Link = (function(superClass) {
     })(this));
     parsed = null;
     return g({
-      className: "linkGroup"
+      className: "linkGroup",
+      onMouseOver: (function(_this) {
+        return function() {
+          return _this.focusParticipants(true);
+        };
+      })(this),
+      onMouseLeave: (function(_this) {
+        return function() {
+          return _this.focusParticipants(false);
+        };
+      })(this)
     }, path({
       className: "link",
-      d: Draw.link(views)
-    }), parsed ? g({
-      className: "annotation"
-    }, _.map(parsed, function(p) {
-      return g({
-        className: "x"
-      }, circle({
-        cx: p.x,
-        cy: p.y,
-        r: 5
-      }), text({
-        dx: p.x + 15,
-        dy: p.y + 15
-      }, p.idx));
-    })) : void 0, path({
-      className: "link",
       opacity: "0.9",
-      fill: this.props.view.fill,
-      d: Draw.link(views)
+      fill: this.props.model.get("focus") ? "deepskyblue" : "#e5e5e5",
+      d: Draw.link(views),
+      style: {
+        opacity: 0.8
+      }
     }));
   };
 
