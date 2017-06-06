@@ -27,15 +27,29 @@ Draw =
     path.join " "
 
 
+  ticks: ({startAngle, endAngle, radius}, thickness = 20) ->
 
+    buildLine = (angle) ->
+      {x: startX, y: startY} = ptc radius + 15, angle
+      {x: endX, y: endY} = ptc radius + 20, angle
+      path = [
+        "M", startX, startY
+        "L", endX, endY
+      ]
+      [path.join " "]
+
+
+    (buildLine angle for angle in [startAngle..endAngle] by 10)
 
 
   textDef: ({startAngle, endAngle, radius}, thickness = 20) ->
 
     # console.log "trying to text", startAngle, endAngle, radius
 
-    {x: innerStartX, y: innerStartY} = ptc radius + 30, startAngle
-    {x: innerEndX, y: innerEndY} = ptc radius + 30, endAngle
+    radius = radius + 30
+
+    {x: innerStartX, y: innerStartY} = ptc radius, startAngle
+    {x: innerEndX, y: innerEndY} = ptc radius, endAngle
 
     largeArc = if endAngle - startAngle <= 180 then 0 else 1
 

@@ -1,28 +1,13 @@
 React = require 'react'
 Engine = require '../layout/engine'
-Draw = require "../layout/draw"
+Draw = require '../layout/draw'
+# Label = require './label'
 Region = React.createFactory require './region'
+Label = React.createFactory require './label'
 {polarToCartesian} = require '../layout/engine'
-{circle, g, text, path} = React.DOM
+{rect, circle, g, text, textPath, path} = React.DOM
 ptc = polarToCartesian
-
-BackboneMixin =
-
-  componentDidMount: ->
-    # Whenever there may be a change in the Backbone data, trigger a reconcile.
-    console.log "my model", @props.model
-
-    @props.model.on 'add change remove', @forceUpdate.bind(this, null), this
-
-  componentWillUnmount: ->
-    # Ensure that we clean up any dangling references when the component is
-    # destroyed.
-    @getBackboneModels().forEach ((model) ->
-      model.off null, null, this
-      return
-    ), this
-    return
-
+Messenger = require './messenger'
 
 class Participant extends React.Component
 
@@ -31,7 +16,6 @@ class Participant extends React.Component
 
   componentDidMount: ->
     # Whenever there may be a change in the Backbone data, trigger a reconcile.
-
     @props.model.on 'add change remove', @forceUpdate.bind(this, null), this
 
   componentWillUnmount: ->
@@ -44,6 +28,10 @@ class Participant extends React.Component
     return
 
   focusMe: (bool) =>
+    if bool is true
+      Messenger.publish "label", @props.model.get("interactor").get("label")
+    else
+      Messenger.publish "label", null
     @props.model.set focus: bool
 
   render: ->
@@ -69,7 +57,6 @@ class Participant extends React.Component
             startAngle: scale.val s.get("start")
             endAngle: scale.val s.get("end")
 
-    # Generate the view
     g {},
       if @props.view.hasLength is true
         path
@@ -81,7 +68,17 @@ class Participant extends React.Component
       else
         {x: cx, y: cy} = ptc @props.view.radius, @props.view.endAngle
         circle {cx: cx, cy: cy, className: "nolenpart", r: 10 }
-      # text {}, textPath {xlinkhref: "tp"}, "Testing" # DOESNT EXIST IN REACT.DOM
+      text {
+        className: "participantLabel",
+        textAnchor: "middle",
+        alignmentBaseline: "middle"},
+        React.createElement "textPath", {
+          xlinkHref: "#tp" + @props.model.get("id"),
+          startOffset: "50%"
+        }, @props.model.get("interactor").get("label")
       Regions
+      for t in Draw.ticks @props.view, 5
+        path {className: "tick", d: t, pointerEvents: "none"}
+
 
 module.exports = Participant

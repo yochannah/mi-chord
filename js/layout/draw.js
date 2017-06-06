@@ -21,14 +21,34 @@ Draw = {
     path = ["M", innerStartX, innerStartY, "A", radius, radius, 0, largeArc, 1, innerEndX, innerEndY, "L", outerEndX, outerEndY, "A", radius + thickness, radius + thickness, 0, largeArc, 0, outerStartX, outerStartY, "Z"];
     return path.join(" ");
   },
+  ticks: function(arg, thickness) {
+    var angle, buildLine, endAngle, j, radius, ref, ref1, results, startAngle;
+    startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    buildLine = function(angle) {
+      var endX, endY, path, ref, ref1, startX, startY;
+      ref = ptc(radius + 15, angle), startX = ref.x, startY = ref.y;
+      ref1 = ptc(radius + 20, angle), endX = ref1.x, endY = ref1.y;
+      path = ["M", startX, startY, "L", endX, endY];
+      return [path.join(" ")];
+    };
+    results = [];
+    for (angle = j = ref = startAngle, ref1 = endAngle; j <= ref1; angle = j += 10) {
+      results.push(buildLine(angle));
+    }
+    return results;
+  },
   textDef: function(arg, thickness) {
     var endAngle, innerEndX, innerEndY, innerStartX, innerStartY, largeArc, path, radius, ref, ref1, startAngle;
     startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
     if (thickness == null) {
       thickness = 20;
     }
-    ref = ptc(radius + 30, startAngle), innerStartX = ref.x, innerStartY = ref.y;
-    ref1 = ptc(radius + 30, endAngle), innerEndX = ref1.x, innerEndY = ref1.y;
+    radius = radius + 30;
+    ref = ptc(radius, startAngle), innerStartX = ref.x, innerStartY = ref.y;
+    ref1 = ptc(radius, endAngle), innerEndX = ref1.x, innerEndY = ref1.y;
     largeArc = endAngle - startAngle <= 180 ? 0 : 1;
     path = ["M", innerStartX, innerStartY, "A", radius, radius, 0, largeArc, 1, innerEndX, innerEndY];
     return path.join(" ");

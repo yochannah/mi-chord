@@ -26,9 +26,10 @@
   },
   "dependencies": {
     "chroma-js": "^1.2.1",
+    "express": "4.15.2",
+    "mediator-js": "^0.9.9",
     "react-dom": "^15.4.1",
     "static-server": "^2.0.4",
-    "underscore": "^1.8.3",
-    "express": "4.15.2"
+    "underscore": "^1.8.3"
   }
 }

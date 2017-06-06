@@ -17,15 +17,27 @@ body {
   stroke-width: 1;
   opacity: 0.8;
 }
+.participantLabel {
+  font-size: 0.8em;
+}
 .region {
   fill: white;
   opacity: 0.3;
+}
+.tick {
+  stroke: black;
+  stroke-width: 1;
+  pointer-events: none;
+  opacity: 0.4;
 }
 .link {
   transition: all 150ms ease-in;
   stroke: #bebebe;
   stroke-width: 1;
   opacity: 0.5;
+}
+.label {
+  z-index: 9999;
 }
 .annotation text {
   fill: black;

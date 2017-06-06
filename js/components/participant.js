@@ -1,4 +1,4 @@
-var BackboneMixin, Draw, Engine, Participant, React, Region, circle, g, path, polarToCartesian, ptc, ref, text,
+var Draw, Engine, Label, Messenger, Participant, React, Region, circle, g, path, polarToCartesian, ptc, rect, ref, text, textPath,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -7,27 +7,19 @@ React = require('react');
 
 Engine = require('../layout/engine');
 
-Draw = require("../layout/draw");
+Draw = require('../layout/draw');
 
 Region = React.createFactory(require('./region'));
 
+Label = React.createFactory(require('./label'));
+
 polarToCartesian = require('../layout/engine').polarToCartesian;
 
-ref = React.DOM, circle = ref.circle, g = ref.g, text = ref.text, path = ref.path;
+ref = React.DOM, rect = ref.rect, circle = ref.circle, g = ref.g, text = ref.text, textPath = ref.textPath, path = ref.path;
 
 ptc = polarToCartesian;
 
-BackboneMixin = {
-  componentDidMount: function() {
-    console.log("my model", this.props.model);
-    return this.props.model.on('add change remove', this.forceUpdate.bind(this, null), this);
-  },
-  componentWillUnmount: function() {
-    this.getBackboneModels().forEach((function(model) {
-      model.off(null, null, this);
-    }), this);
-  }
-};
+Messenger = require('./messenger');
 
 Participant = (function(superClass) {
   extend(Participant, superClass);
@@ -48,13 +40,18 @@ Participant = (function(superClass) {
   };
 
   Participant.prototype.focusMe = function(bool) {
+    if (bool === true) {
+      Messenger.publish("label", this.props.model.get("interactor").get("label"));
+    } else {
+      Messenger.publish("label", null);
+    }
     return this.props.model.set({
       focus: bool
     });
   };
 
   Participant.prototype.render = function() {
-    var Regions, cx, cy, ref1;
+    var Regions, cx, cy, ref1, t;
     Regions = [];
     this.props.model.get("features").map((function(_this) {
       return function(f) {
@@ -92,7 +89,27 @@ Participant = (function(superClass) {
       cy: cy,
       className: "nolenpart",
       r: 10
-    })), Regions);
+    })), text({
+      className: "participantLabel",
+      textAnchor: "middle",
+      alignmentBaseline: "middle"
+    }, React.createElement("textPath", {
+      xlinkHref: "#tp" + this.props.model.get("id"),
+      startOffset: "50%"
+    }, this.props.model.get("interactor").get("label"))), Regions, (function() {
+      var i, len, ref2, results;
+      ref2 = Draw.ticks(this.props.view, 5);
+      results = [];
+      for (i = 0, len = ref2.length; i < len; i++) {
+        t = ref2[i];
+        results.push(path({
+          className: "tick",
+          d: t,
+          pointerEvents: "none"
+        }));
+      }
+      return results;
+    }).call(this));
   };
 
   return Participant;
