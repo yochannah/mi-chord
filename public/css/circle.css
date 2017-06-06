@@ -30,6 +30,14 @@ body {
   pointer-events: none;
   opacity: 0.4;
 }
+.tooltip {
+  pointer-events: none;
+}
+.tooltip .container {
+  fill: white;
+  stroke: grey;
+  stroke-width: 1;
+}
 .link {
   transition: all 150ms ease-in;
   stroke: #bebebe;

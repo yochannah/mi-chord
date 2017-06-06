@@ -18,7 +18,20 @@ class SVG extends React.Component
     @state = {label: null}
 
   componentDidMount: ->
+
     Messenger.subscribe "label", (m) => @setState {label: m}
+
+    # https://stackoverflow.com/questions/10298658/mouse-position-inside-autoscaled-svg
+    pt = @refs.svg.createSVGPoint()
+
+    cursorPoint = (evt) =>
+      pt.x = evt.clientX; pt.y = evt.clientY;
+      pt.matrixTransform @refs.svg.getScreenCTM().inverse();
+
+    @refs.svg.addEventListener "mousemove", (evt) =>
+      {x, y} = cursorPoint(evt)
+      @setState {x, y}
+
 
   render: ->
 
@@ -40,15 +53,13 @@ class SVG extends React.Component
     Links = links.map (l, i) ->
       return Link model: l, views: views, view: fill: s(i).hex()
 
-    # if @state.label?
-
-    svg {className: "mi-chord"},
+    svg {className: "mi-chord", ref: "svg"},
       defs {}, defpaths
       g {style: shapeRendering: "geometricPrecision"},
         # text {}, @props.model.get("interactions").at(0).get("id")
         g {className: "participants"}, Participants
         g {className: "links", style: transform: "translate(250px,250px)"}, Links
-        # if @state.label? then Label {message: @state.label}
+        if @state.label? then Label {message: @state.label, x: @state.x, y: @state.y}
 
 
 module.exports = SVG

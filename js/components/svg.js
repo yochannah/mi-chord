@@ -33,10 +33,29 @@ SVG = (function(superClass) {
   }
 
   SVG.prototype.componentDidMount = function() {
-    return Messenger.subscribe("label", (function(_this) {
+    var cursorPoint, pt;
+    Messenger.subscribe("label", (function(_this) {
       return function(m) {
         return _this.setState({
           label: m
+        });
+      };
+    })(this));
+    pt = this.refs.svg.createSVGPoint();
+    cursorPoint = (function(_this) {
+      return function(evt) {
+        pt.x = evt.clientX;
+        pt.y = evt.clientY;
+        return pt.matrixTransform(_this.refs.svg.getScreenCTM().inverse());
+      };
+    })(this);
+    return this.refs.svg.addEventListener("mousemove", (function(_this) {
+      return function(evt) {
+        var ref1, x, y;
+        ref1 = cursorPoint(evt), x = ref1.x, y = ref1.y;
+        return _this.setState({
+          x: x,
+          y: y
         });
       };
     })(this));
@@ -72,7 +91,8 @@ SVG = (function(superClass) {
       });
     });
     return svg({
-      className: "mi-chord"
+      className: "mi-chord",
+      ref: "svg"
     }, defs({}, defpaths), g({
       style: {
         shapeRendering: "geometricPrecision"
@@ -84,7 +104,11 @@ SVG = (function(superClass) {
       style: {
         transform: "translate(250px,250px)"
       }
-    }, Links)));
+    }, Links), this.state.label != null ? Label({
+      message: this.state.label,
+      x: this.state.x,
+      y: this.state.y
+    }) : void 0));
   };
 
   return SVG;

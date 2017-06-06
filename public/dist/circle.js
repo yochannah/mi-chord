@@ -1,5 +1,5 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.Circle = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var Label, React, _, g, rect, ref,
+var Label, React, _, g, rect, ref, text,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -7,28 +7,57 @@ React = require('react');
 
 _ = require('underscore');
 
-ref = React.DOM, g = ref.g, rect = ref.rect;
+ref = React.DOM, g = ref.g, rect = ref.rect, text = ref.text;
 
 Label = (function(superClass) {
   extend(Label, superClass);
 
   function Label(props) {
     Label.__super__.constructor.call(this, props);
-  }
-
-  Label.prototype.componentDidMount = function() {};
-
-  Label.prototype.render = function() {
-    return g({
-      className: "mi-chord"
-    }, rect({
-      className: "label",
+    this.state = {
       x: 0,
       y: 0,
-      width: 200,
-      height: 75,
-      fill: "red"
-    }));
+      textWidth: 0,
+      textHeight: 0,
+      textX: 0,
+      textY: 0
+    };
+  }
+
+  Label.prototype.componentDidMount = function() {
+    var height, ref1, width, x, y;
+    ref1 = this.refs.text.getBBox(), width = ref1.width, height = ref1.height, x = ref1.x, y = ref1.y;
+    return this.setState({
+      textWidth: width,
+      textHeight: height,
+      textX: x,
+      textY: y
+    });
+  };
+
+  Label.prototype.render = function() {
+    var padding, ref1, textHeight, textWidth, textX, textY;
+    padding = 5;
+    ref1 = this.state, textWidth = ref1.textWidth, textHeight = ref1.textHeight, textX = ref1.textX, textY = ref1.textY;
+    textWidth += padding * 2;
+    textHeight += padding * 2;
+    textX -= padding;
+    textY -= padding;
+    return g({
+      className: "tooltip",
+      transform: "translate(" + this.props.x + "," + this.props.y + ")"
+    }, g({
+      transform: "translate(25, 25)"
+    }), rect({
+      className: "container",
+      x: textX,
+      y: textY,
+      width: textWidth,
+      height: textHeight
+    }), text({
+      className: "labelHeading",
+      ref: "text"
+    }, this.props.message));
   };
 
   return Label;
@@ -231,7 +260,7 @@ Participant = (function(superClass) {
 
   Participant.prototype.focusMe = function(bool) {
     if (bool === true) {
-      Messenger.publish("label", this.props.model.get("interactor").get("label"));
+      Messenger.publish("label", this.props.model.get("interactor").get("label") + " (" + this.props.model.get("interactor").get("id") + ")");
     } else {
       Messenger.publish("label", null);
     }
@@ -377,10 +406,29 @@ SVG = (function(superClass) {
   }
 
   SVG.prototype.componentDidMount = function() {
-    return Messenger.subscribe("label", (function(_this) {
+    var cursorPoint, pt;
+    Messenger.subscribe("label", (function(_this) {
       return function(m) {
         return _this.setState({
           label: m
+        });
+      };
+    })(this));
+    pt = this.refs.svg.createSVGPoint();
+    cursorPoint = (function(_this) {
+      return function(evt) {
+        pt.x = evt.clientX;
+        pt.y = evt.clientY;
+        return pt.matrixTransform(_this.refs.svg.getScreenCTM().inverse());
+      };
+    })(this);
+    return this.refs.svg.addEventListener("mousemove", (function(_this) {
+      return function(evt) {
+        var ref1, x, y;
+        ref1 = cursorPoint(evt), x = ref1.x, y = ref1.y;
+        return _this.setState({
+          x: x,
+          y: y
         });
       };
     })(this));
@@ -416,7 +464,8 @@ SVG = (function(superClass) {
       });
     });
     return svg({
-      className: "mi-chord"
+      className: "mi-chord",
+      ref: "svg"
     }, defs({}, defpaths), g({
       style: {
         shapeRendering: "geometricPrecision"
@@ -428,7 +477,11 @@ SVG = (function(superClass) {
       style: {
         transform: "translate(250px,250px)"
       }
-    }, Links)));
+    }, Links), this.state.label != null ? Label({
+      message: this.state.label,
+      x: this.state.x,
+      y: this.state.y
+    }) : void 0));
   };
 
   return SVG;

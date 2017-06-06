@@ -29,7 +29,7 @@ class Participant extends React.Component
 
   focusMe: (bool) =>
     if bool is true
-      Messenger.publish "label", @props.model.get("interactor").get("label")
+      Messenger.publish "label", @props.model.get("interactor").get("label") + " (" + @props.model.get("interactor").get("id") + ")"
     else
       Messenger.publish "label", null
     @props.model.set focus: bool

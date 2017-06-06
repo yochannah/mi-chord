@@ -41,7 +41,7 @@ Participant = (function(superClass) {
 
   Participant.prototype.focusMe = function(bool) {
     if (bool === true) {
-      Messenger.publish("label", this.props.model.get("interactor").get("label"));
+      Messenger.publish("label", this.props.model.get("interactor").get("label") + " (" + this.props.model.get("interactor").get("id") + ")");
     } else {
       Messenger.publish("label", null);
     }
