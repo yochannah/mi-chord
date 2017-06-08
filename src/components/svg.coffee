@@ -30,8 +30,12 @@ class SVG extends React.Component
 
     @refs.svg.addEventListener "mousemove", (evt) =>
       {x, y} = cursorPoint(evt)
-      @setState {x, y}
+      @setState mouse: {x, y}
 
+
+    @setState rootsvg: @refs.svg.getBBox()
+    window.addEventListener "resize", (evt) =>
+      @setState rootsvg: @refs.svg.getBBox()
 
   render: ->
 
@@ -53,13 +57,13 @@ class SVG extends React.Component
     Links = links.map (l, i) ->
       return Link model: l, views: views, view: fill: s(i).hex()
 
-    svg {className: "mi-chord", ref: "svg"},
+    svg {className: "mi-chord", ref: "svg", id: "banana"},
       defs {}, defpaths
       g {style: shapeRendering: "geometricPrecision"},
         # text {}, @props.model.get("interactions").at(0).get("id")
         g {className: "participants"}, Participants
         g {className: "links", style: transform: "translate(250px,250px)"}, Links
-        if @state.label? then Label {message: @state.label, x: @state.x, y: @state.y}
+        if @state.label? then Label {rootsvg: @state.rootsvg, message: @state.label, mouse: @state.mouse}
 
 
 module.exports = SVG

@@ -23,8 +23,13 @@ class Label extends React.Component
     textX -= padding
     textY -= padding
 
-    g {className: "tooltip", transform: "translate(" + @props.x + "," + @props.y + ")"},
-      g {transform: "translate(25, 25)"}
+    alignLeft = @props.mouse.x > @props.rootsvg.width / 2
+
+    adjusted =
+      x: Math.min (-1 * ((@props.mouse.x + textWidth + (padding * 2)) - @props.rootsvg.width)), 0
+
+    g {className: "tooltip", transform: "translate(" + @props.mouse.x + "," + @props.mouse.y + ")"},
+      g {transform: "translate(#{adjusted.x}, 0)"},
         rect {className: "container", x: textX, y: textY, width: textWidth, height: textHeight}
         text {className: "labelHeading", ref: "text"}, @props.message
 

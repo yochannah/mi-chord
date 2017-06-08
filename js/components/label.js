@@ -35,19 +35,23 @@ Label = (function(superClass) {
   };
 
   Label.prototype.render = function() {
-    var padding, ref1, textHeight, textWidth, textX, textY;
+    var adjusted, alignLeft, padding, ref1, textHeight, textWidth, textX, textY;
     padding = 5;
     ref1 = this.state, textWidth = ref1.textWidth, textHeight = ref1.textHeight, textX = ref1.textX, textY = ref1.textY;
     textWidth += padding * 2;
     textHeight += padding * 2;
     textX -= padding;
     textY -= padding;
+    alignLeft = this.props.mouse.x > this.props.rootsvg.width / 2;
+    adjusted = {
+      x: Math.min(-1 * ((this.props.mouse.x + textWidth + (padding * 2)) - this.props.rootsvg.width), 0)
+    };
     return g({
       className: "tooltip",
-      transform: "translate(" + this.props.x + "," + this.props.y + ")"
+      transform: "translate(" + this.props.mouse.x + "," + this.props.mouse.y + ")"
     }, g({
-      transform: "translate(25, 25)"
-    }), rect({
+      transform: "translate(" + adjusted.x + ", 0)"
+    }, rect({
       className: "container",
       x: textX,
       y: textY,
@@ -56,7 +60,7 @@ Label = (function(superClass) {
     }), text({
       className: "labelHeading",
       ref: "text"
-    }, this.props.message));
+    }, this.props.message)));
   };
 
   return Label;

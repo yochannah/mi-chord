@@ -36,19 +36,23 @@ Label = (function(superClass) {
   };
 
   Label.prototype.render = function() {
-    var padding, ref1, textHeight, textWidth, textX, textY;
+    var adjusted, alignLeft, padding, ref1, textHeight, textWidth, textX, textY;
     padding = 5;
     ref1 = this.state, textWidth = ref1.textWidth, textHeight = ref1.textHeight, textX = ref1.textX, textY = ref1.textY;
     textWidth += padding * 2;
     textHeight += padding * 2;
     textX -= padding;
     textY -= padding;
+    alignLeft = this.props.mouse.x > this.props.rootsvg.width / 2;
+    adjusted = {
+      x: Math.min(-1 * ((this.props.mouse.x + textWidth + (padding * 2)) - this.props.rootsvg.width), 0)
+    };
     return g({
       className: "tooltip",
-      transform: "translate(" + this.props.x + "," + this.props.y + ")"
+      transform: "translate(" + this.props.mouse.x + "," + this.props.mouse.y + ")"
     }, g({
-      transform: "translate(25, 25)"
-    }), rect({
+      transform: "translate(" + adjusted.x + ", 0)"
+    }, rect({
       className: "container",
       x: textX,
       y: textY,
@@ -57,7 +61,7 @@ Label = (function(superClass) {
     }), text({
       className: "labelHeading",
       ref: "text"
-    }, this.props.message));
+    }, this.props.message)));
   };
 
   return Label;
@@ -422,13 +426,25 @@ SVG = (function(superClass) {
         return pt.matrixTransform(_this.refs.svg.getScreenCTM().inverse());
       };
     })(this);
-    return this.refs.svg.addEventListener("mousemove", (function(_this) {
+    this.refs.svg.addEventListener("mousemove", (function(_this) {
       return function(evt) {
         var ref1, x, y;
         ref1 = cursorPoint(evt), x = ref1.x, y = ref1.y;
         return _this.setState({
-          x: x,
-          y: y
+          mouse: {
+            x: x,
+            y: y
+          }
+        });
+      };
+    })(this));
+    this.setState({
+      rootsvg: this.refs.svg.getBBox()
+    });
+    return window.addEventListener("resize", (function(_this) {
+      return function(evt) {
+        return _this.setState({
+          rootsvg: _this.refs.svg.getBBox()
         });
       };
     })(this));
@@ -465,7 +481,8 @@ SVG = (function(superClass) {
     });
     return svg({
       className: "mi-chord",
-      ref: "svg"
+      ref: "svg",
+      id: "banana"
     }, defs({}, defpaths), g({
       style: {
         shapeRendering: "geometricPrecision"
@@ -478,9 +495,9 @@ SVG = (function(superClass) {
         transform: "translate(250px,250px)"
       }
     }, Links), this.state.label != null ? Label({
+      rootsvg: this.state.rootsvg,
       message: this.state.label,
-      x: this.state.x,
-      y: this.state.y
+      mouse: this.state.mouse
     }) : void 0));
   };
 
