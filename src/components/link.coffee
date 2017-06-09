@@ -25,9 +25,6 @@ parser = (path) ->
   annotations
 
 
-
-
-
 class Link extends React.Component
 
   constructor: (props) ->

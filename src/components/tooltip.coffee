@@ -1,9 +1,9 @@
 React = require 'react'
 _ = require 'underscore'
 
-{g, rect, text} = React.DOM
+{g, rect, text, tspan} = React.DOM
 
-class Label extends React.Component
+class Tooltip extends React.Component
 
   constructor: (props) ->
     super props
@@ -27,11 +27,13 @@ class Label extends React.Component
 
     adjusted =
       x: Math.min (-1 * ((@props.mouse.x + textWidth + (padding * 2)) - @props.rootsvg.width)), 0
+      y: Math.min (-1 * ((@props.mouse.y + textHeight + (padding * 2)) - @props.rootsvg.height)), 0
 
     g {className: "tooltip", transform: "translate(" + @props.mouse.x + "," + @props.mouse.y + ")"},
-      g {transform: "translate(#{adjusted.x}, 0)"},
+      g {transform: "translate(#{adjusted.x}, #{adjusted.y})"},
         rect {className: "container", x: textX, y: textY, width: textWidth, height: textHeight}
-        text {className: "labelHeading", ref: "text"}, @props.message
+        text {className: "labelHeading", ref: "text"},
+          tspan {x: 0, dy: "1.4em"}, @props.message
 
 
-module.exports = Label
+module.exports = Tooltip

@@ -1,4 +1,4 @@
-var Chroma, Draw, Engine, Label, Link, Messenger, Participant, React, SVG, _, defs, g, path, ref, svg, text,
+var Chroma, Draw, Engine, Link, Messenger, Participant, React, SVG, Tooltip, _, defs, g, path, ref, svg, text,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -16,7 +16,7 @@ Draw = require('../layout/draw');
 
 _ = require('underscore');
 
-Label = React.createFactory(require('./label'));
+Tooltip = React.createFactory(require('./tooltip'));
 
 Messenger = require('./messenger');
 
@@ -117,7 +117,7 @@ SVG = (function(superClass) {
       style: {
         transform: "translate(250px,250px)"
       }
-    }, Links), this.state.label != null ? Label({
+    }, Links), this.state.label != null ? Tooltip({
       rootsvg: this.state.rootsvg,
       message: this.state.label,
       mouse: this.state.mouse

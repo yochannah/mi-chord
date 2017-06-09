@@ -5,7 +5,7 @@ Link = React.createFactory require './link'
 Chroma = require 'chroma-js'
 Draw = require '../layout/draw'
 _ = require 'underscore'
-Label = React.createFactory require './label'
+Tooltip = React.createFactory require './tooltip'
 Messenger = require './messenger'
 
 
@@ -63,7 +63,7 @@ class SVG extends React.Component
         # text {}, @props.model.get("interactions").at(0).get("id")
         g {className: "participants"}, Participants
         g {className: "links", style: transform: "translate(250px,250px)"}, Links
-        if @state.label? then Label {rootsvg: @state.rootsvg, message: @state.label, mouse: @state.mouse}
+        if @state.label? then Tooltip {rootsvg: @state.rootsvg, message: @state.label, mouse: @state.mouse}
 
 
 module.exports = SVG
