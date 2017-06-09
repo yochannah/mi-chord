@@ -2,6 +2,7 @@ React = require 'react'
 Engine = require '../layout/engine'
 Draw = require "../layout/draw"
 _ = require 'underscore'
+Messenger = require './messenger'
 
 {circle, g, text, path} = React.DOM
 
@@ -49,6 +50,24 @@ class Link extends React.Component
     @props.model.get("features").map (f) ->
       f.get("participant").set focus: bool
 
+    tooltipText = []
+
+    console.log "LINK", @props
+
+    @props.model.get("features").each (feature) ->
+      feature.get("sequenceData").each (sd) ->
+        console.log "SD", sd
+        interactorLabel = sd.get("feature").get("participant").get("interactor").get("label")
+        pos = "(" + sd.get("pos") + ")"
+
+        tooltipText.push interactorLabel + " " + pos
+
+    if bool is true
+      Messenger.publish "label", {title: "Interaction", text: tooltipText}
+    else
+      Messenger.publish "label", null
+
+
   render: ->
 
     views = []
@@ -93,6 +112,7 @@ class Link extends React.Component
         className: "link"
         opacity: "0.9"
         fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
+        # fill: @props.view.fill
         d: Draw.link views
         style: opacity: 0.8
 

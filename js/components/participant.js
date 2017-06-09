@@ -40,8 +40,13 @@ Participant = (function(superClass) {
   };
 
   Participant.prototype.focusMe = function(bool) {
+    var tt;
     if (bool === true) {
-      Messenger.publish("label", this.props.model.get("interactor").get("label") + " (" + this.props.model.get("interactor").get("id") + ")");
+      tt = {
+        title: "Participant",
+        text: [this.props.model.get("interactor").get("label"), "(" + this.props.model.get("interactor").get("id") + ")"]
+      };
+      Messenger.publish("label", tt);
     } else {
       Messenger.publish("label", null);
     }

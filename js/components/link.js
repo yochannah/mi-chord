@@ -1,4 +1,4 @@
-var Draw, Engine, Link, React, _, center, circle, g, parser, path, ref, text,
+var Draw, Engine, Link, Messenger, React, _, center, circle, g, parser, path, ref, text,
   slice = [].slice,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -11,6 +11,8 @@ Engine = require('../layout/engine');
 Draw = require("../layout/draw");
 
 _ = require('underscore');
+
+Messenger = require('./messenger');
 
 ref = React.DOM, circle = ref.circle, g = ref.g, text = ref.text, path = ref.path;
 
@@ -79,14 +81,34 @@ Link = (function(superClass) {
   };
 
   Link.prototype.focusParticipants = function(bool) {
+    var tooltipText;
     this.props.model.set({
       focus: bool
     });
-    return this.props.model.get("features").map(function(f) {
+    this.props.model.get("features").map(function(f) {
       return f.get("participant").set({
         focus: bool
       });
     });
+    tooltipText = [];
+    console.log("LINK", this.props);
+    this.props.model.get("features").each(function(feature) {
+      return feature.get("sequenceData").each(function(sd) {
+        var interactorLabel, pos;
+        console.log("SD", sd);
+        interactorLabel = sd.get("feature").get("participant").get("interactor").get("label");
+        pos = "(" + sd.get("pos") + ")";
+        return tooltipText.push(interactorLabel + " " + pos);
+      });
+    });
+    if (bool === true) {
+      return Messenger.publish("label", {
+        title: "Interaction",
+        text: tooltipText
+      });
+    } else {
+      return Messenger.publish("label", null);
+    }
   };
 
   Link.prototype.render = function() {

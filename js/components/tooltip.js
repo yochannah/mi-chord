@@ -35,7 +35,7 @@ Tooltip = (function(superClass) {
   };
 
   Tooltip.prototype.render = function() {
-    var adjusted, alignLeft, padding, ref1, textHeight, textWidth, textX, textY;
+    var adjusted, alignLeft, padding, ref1, sub, textHeight, textWidth, textX, textY;
     padding = 5;
     ref1 = this.state, textWidth = ref1.textWidth, textHeight = ref1.textHeight, textX = ref1.textX, textY = ref1.textY;
     textWidth += padding * 2;
@@ -61,10 +61,26 @@ Tooltip = (function(superClass) {
     }), text({
       className: "labelHeading",
       ref: "text"
-    }, tspan({
+    }, this.props.message.title ? tspan({
+      className: "labelTitle",
       x: 0,
       dy: "1.4em"
-    }, this.props.message))));
+    }, this.props.message.title) : void 0, (function() {
+      var i, len, ref2, ref3, results;
+      if (((ref2 = this.props.message) != null ? ref2.text : void 0) != null) {
+        ref3 = this.props.message.text;
+        results = [];
+        for (i = 0, len = ref3.length; i < len; i++) {
+          sub = ref3[i];
+          results.push(tspan({
+            className: "labelSub",
+            x: 0,
+            dy: "1.4em"
+          }, sub));
+        }
+        return results;
+      }
+    }).call(this))));
   };
 
   return Tooltip;
