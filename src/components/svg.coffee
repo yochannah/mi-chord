@@ -7,6 +7,7 @@ Draw = require '../layout/draw'
 _ = require 'underscore'
 Tooltip = React.createFactory require './tooltip'
 Messenger = require './messenger'
+Unknown = React.createFactory require './unknown'
 
 
 {svg, g, text, path, defs} = React.DOM
@@ -54,6 +55,10 @@ class SVG extends React.Component
       p.key = p.model.get("id")
       return Participant p
 
+    Unknowns = _.values(views).map (p) ->
+      p.key = p.model.get("id")
+      return Unknown p
+
     Links = links.map (l, i) ->
       return Link model: l, views: views, view: fill: s(i).hex()
 
@@ -64,6 +69,7 @@ class SVG extends React.Component
         g {className: "participants"}, Participants
         g {className: "links", style: transform: "translate(250px,250px)"}, Links
         if @state.label? then Tooltip {rootsvg: @state.rootsvg, message: @state.label, mouse: @state.mouse}
+      g {className: "unknowns"}, Unknowns
 
 
 module.exports = SVG

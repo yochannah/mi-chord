@@ -21,6 +21,14 @@ Draw = {
     path = ["M", innerStartX, innerStartY, "A", radius, radius, 0, largeArc, 1, innerEndX, innerEndY, "L", outerEndX, outerEndY, "A", radius + thickness, radius + thickness, 0, largeArc, 0, outerStartX, outerStartY, "Z"];
     return path.join(" ");
   },
+  center: function(arg, thickness) {
+    var endAngle, radius, ref, startAngle, x, y;
+    startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    return ref = ptc(radius - 30, (startAngle + endAngle) / 2), x = ref.x, y = ref.y, ref;
+  },
   ticks: function(arg, thickness) {
     var angle, buildLine, endAngle, j, radius, ref, ref1, results, startAngle;
     startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;

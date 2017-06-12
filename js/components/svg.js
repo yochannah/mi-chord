@@ -1,4 +1,4 @@
-var Chroma, Draw, Engine, Link, Messenger, Participant, React, SVG, Tooltip, _, defs, g, path, ref, svg, text,
+var Chroma, Draw, Engine, Link, Messenger, Participant, React, SVG, Tooltip, Unknown, _, defs, g, path, ref, svg, text,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -19,6 +19,8 @@ _ = require('underscore');
 Tooltip = React.createFactory(require('./tooltip'));
 
 Messenger = require('./messenger');
+
+Unknown = React.createFactory(require('./unknown'));
 
 ref = React.DOM, svg = ref.svg, g = ref.g, text = ref.text, path = ref.path, defs = ref.defs;
 
@@ -74,7 +76,7 @@ SVG = (function(superClass) {
   };
 
   SVG.prototype.render = function() {
-    var Links, Participants, defpaths, interaction, links, participants, s, views;
+    var Links, Participants, Unknowns, defpaths, interaction, links, participants, s, views;
     interaction = this.props.model.get("interactions").at(0);
     participants = interaction.get("participants");
     links = interaction.get("links");
@@ -92,6 +94,10 @@ SVG = (function(superClass) {
     Participants = _.values(views).map(function(p) {
       p.key = p.model.get("id");
       return Participant(p);
+    });
+    Unknowns = _.values(views).map(function(p) {
+      p.key = p.model.get("id");
+      return Unknown(p);
     });
     Links = links.map(function(l, i) {
       return Link({
@@ -121,7 +127,9 @@ SVG = (function(superClass) {
       rootsvg: this.state.rootsvg,
       message: this.state.label,
       mouse: this.state.mouse
-    }) : void 0));
+    }) : void 0), g({
+      className: "unknowns"
+    }, Unknowns));
   };
 
   return SVG;

@@ -64,6 +64,14 @@ body {
   stroke: red;
   stroke-width: 1;
 }
+.unknown {
+  fill: white;
+  stroke: black;
+  stroke-width: 1;
+}
+.unknownLabel {
+  font-size: 0.7em;
+}
 .nolenpart {
   fill: white;
   stroke: #3e3e3e;

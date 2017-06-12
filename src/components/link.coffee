@@ -52,11 +52,8 @@ class Link extends React.Component
 
     tooltipText = []
 
-    console.log "LINK", @props
-
     @props.model.get("features").each (feature) ->
       feature.get("sequenceData").each (sd) ->
-        console.log "SD", sd
         interactorLabel = sd.get("feature").get("participant").get("interactor").get("label")
         pos = "(" + sd.get("pos") + ")"
 
@@ -111,8 +108,8 @@ class Link extends React.Component
       path
         className: "link"
         opacity: "0.9"
-        fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
-        # fill: @props.view.fill
+        # fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
+        fill: @props.view.fill
         d: Draw.link views
         style: opacity: 0.8
 

@@ -27,6 +27,10 @@ Draw =
     path.join " "
 
 
+  center: ({startAngle, endAngle, radius}, thickness = 20) ->
+    {x, y} = ptc radius - 30, (startAngle + endAngle) / 2
+
+
   ticks: ({startAngle, endAngle, radius}, thickness = 20) ->
 
     buildLine = (angle) ->

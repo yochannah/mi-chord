@@ -91,11 +91,9 @@ Link = (function(superClass) {
       });
     });
     tooltipText = [];
-    console.log("LINK", this.props);
     this.props.model.get("features").each(function(feature) {
       return feature.get("sequenceData").each(function(sd) {
         var interactorLabel, pos;
-        console.log("SD", sd);
         interactorLabel = sd.get("feature").get("participant").get("interactor").get("label");
         pos = "(" + sd.get("pos") + ")";
         return tooltipText.push(interactorLabel + " " + pos);
@@ -144,7 +142,7 @@ Link = (function(superClass) {
     }, path({
       className: "link",
       opacity: "0.9",
-      fill: this.props.model.get("focus") ? "deepskyblue" : "#e5e5e5",
+      fill: this.props.view.fill,
       d: Draw.link(views),
       style: {
         opacity: 0.8
