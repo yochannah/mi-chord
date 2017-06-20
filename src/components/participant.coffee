@@ -66,12 +66,19 @@ class Participant extends React.Component
 
     g {},
       if @props.view.hasLength is true
-        path
-          fill: if @props.model.get("focus") is true then "deepskyblue" else "#a8a8a8"
-          onMouseEnter: => @focusMe true
-          onMouseLeave: => @focusMe false
-          className: "participant",
-          d: Draw.arc @props.view
+        g {},
+          path
+            fill: if @props.model.get("focus") is true then "deepskyblue" else "#a8a8a8"
+            onMouseEnter: => @focusMe true
+            onMouseLeave: => @focusMe false
+            className: "participant",
+            d: Draw.arc @props.view,
+          path
+            fill: if @props.model.get("focus") is true then "deepskyblue" else "#a8a8a8"
+            onMouseEnter: => @focusMe true
+            onMouseLeave: => @focusMe false
+            className: "participantUnknown",
+            d: Draw.arc2 @props.view
       else
         {x: cx, y: cy} = ptc @props.view.radius, @props.view.endAngle
         circle {cx: cx, cy: cy, className: "nolenpart", r: 10 }
@@ -84,8 +91,9 @@ class Participant extends React.Component
           startOffset: "50%"
         }, @props.model.get("interactor").get("label")
       Regions
-      for t in Draw.ticks @props.view, 5
-        path {className: "tick", d: t, pointerEvents: "none"}
+      if @props.view.hasLength
+        for t in Draw.ticks @props.view, 5
+          path {className: "tick", d: t, pointerEvents: "none"}
 
 
 module.exports = Participant

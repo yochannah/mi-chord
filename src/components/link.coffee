@@ -67,6 +67,8 @@ class Link extends React.Component
 
   render: ->
 
+
+
     views = []
 
     # Walk through each feature in the link
@@ -84,15 +86,23 @@ class Link extends React.Component
 
       # Walk through each sequenceData of the feature (could be more than one)
       sequenceData = feature.get("sequenceData").map (s) ->
-        views.push
-          radius: participantView.radius
-          startAngle: scale.val s.get("start")
-          endAngle: scale.val s.get("end")
+        start = s.get("start")
+        end = s.get("start")
+        if start is null and end is null
+          halfway = (participantView.unknownStart + participantView.unknownEnd) / 2
+          views.push
+            radius: participantView.radius
+            startAngle: participantView.unknownStart
+            endAngle: participantView.unknownEnd
+        else
+          views.push
+            radius: participantView.radius
+            startAngle: scale.val s.get("start")
+            endAngle: scale.val s.get("end")
 
 
     parsed = null
     # parsed = parser Draw.link(views)
-
 
     g
       className: "linkGroup"

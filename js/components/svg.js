@@ -1,4 +1,4 @@
-var Chroma, Draw, Engine, Link, Messenger, Participant, React, SVG, Tooltip, Unknown, _, defs, g, path, ref, svg, text,
+var Chroma, Draw, Engine, Link, Messenger, Participant, React, SVG, Tooltip, Unknown, _, circle, defs, g, mask, path, radialGradient, rect, ref, stop, svg, text,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -22,7 +22,7 @@ Messenger = require('./messenger');
 
 Unknown = React.createFactory(require('./unknown'));
 
-ref = React.DOM, svg = ref.svg, g = ref.g, text = ref.text, path = ref.path, defs = ref.defs;
+ref = React.DOM, svg = ref.svg, g = ref.g, text = ref.text, path = ref.path, defs = ref.defs, radialGradient = ref.radialGradient, stop = ref.stop, mask = ref.mask, circle = ref.circle, rect = ref.rect;
 
 SVG = (function(superClass) {
   extend(SVG, superClass);
@@ -90,14 +90,56 @@ SVG = (function(superClass) {
         d: Draw.textDef(v.view)
       });
     });
+    defpaths.push(radialGradient({
+      id: "rgrad",
+      cx: "50%",
+      cy: "50%",
+      r: "75%"
+    }, stop({
+      offset: "0%",
+      style: {
+        stopColor: "rgb(255,255,255)",
+        stopOpacity: 1
+      }
+    }), stop({
+      offset: "50%",
+      style: {
+        stopColor: "rgb(255,255,255)",
+        stopOpacity: 1
+      }
+    }), stop({
+      offset: "62%",
+      style: {
+        stopColor: "rgb(0,0,0)",
+        stopOpacity: 1
+      }
+    }), stop({
+      offset: "100%",
+      style: {
+        stopColor: "rgb(0,0,0)",
+        stopOpacity: 1
+      }
+    })));
+    defpaths.push(mask({
+      id: "fademask",
+      maskContentUnits: "objectBoundingBox"
+    }, rect({
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+      fill: "url(#rgrad)"
+    })));
     s = Chroma.scale('Spectral').domain([0, links.length - 1]);
     Participants = _.values(views).map(function(p) {
       p.key = p.model.get("id");
       return Participant(p);
     });
     Unknowns = _.values(views).map(function(p) {
-      p.key = p.model.get("id");
-      return Unknown(p);
+      if (p.view.hasLength) {
+        p.key = p.model.get("id");
+        return Unknown(p);
+      }
     });
     Links = links.map(function(l, i) {
       return Link({
@@ -111,7 +153,7 @@ SVG = (function(superClass) {
     return svg({
       className: "mi-chord",
       ref: "svg",
-      id: "banana"
+      viewBox: "0 0 500 500"
     }, defs({}, defpaths), g({
       style: {
         shapeRendering: "geometricPrecision"

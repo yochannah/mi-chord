@@ -11,9 +11,9 @@ class Unknown extends React.Component
 
   render: ->
 
-    {x, y} = Draw.center @props.view
+    {x, y} = Draw.centerUnknown @props.view
     g {transform: "translate(250, 250)"},
-      circle {className: "unknown", r: 7, cx: x, cy: y}
+      # circle {className: "unknown", r: 7, cx: x, cy: y}
       g {transform: "translate(#{x}, #{y})"},
         text {className: "unknownLabel", textAnchor: "middle", dy: "4"}, "?"
 

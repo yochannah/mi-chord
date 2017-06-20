@@ -31,25 +31,35 @@ Engine =
 
     nolengthviews = []
 
-    withlength.map (p) ->
+    questionMarkWidth = 3
+
+    withlength.map (p, i) ->
 
       previous = _.last views
 
       if previous
         views.push
-          model: p,
+          model: p
           view:
             hasLength: true
             radius: 200
-            startAngle: previous.view.endAngle + 3
-            endAngle: (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 3
+            unknownStart: previous.view.endAngle + 3
+            unknownEnd: previous.view.endAngle + 8
+            startAngle: previous.view.endAngle + 8
+            endAngle:
+              if i = withlength.length - 1
+                (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 3
+              else
+                (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 3
       else
         views.push
           model: p,
           view:
+            unknownStart: 0
+            unknownEnd: 5
             hasLength: true
             radius: 200
-            startAngle: 1
+            startAngle: 5
             endAngle: scale.val p.get("interactor").get("length")
 
     nolength.map (p, i) ->

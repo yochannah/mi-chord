@@ -6,7 +6,7 @@ wind = require('./utils').wind;
 
 Engine = {
   layout: function(participants) {
-    var lengths, molRadius, nolength, nolengthviews, scale, sum, views, withlength;
+    var lengths, molRadius, nolength, nolengthviews, questionMarkWidth, scale, sum, views, withlength;
     lengths = participants.map(function(p) {
       return p.get("interactor").get("length");
     });
@@ -28,7 +28,8 @@ Engine = {
     scale = this.scale([0, 360 - (nolength.length * molRadius)], [0, sum]);
     views = [];
     nolengthviews = [];
-    withlength.map(function(p) {
+    questionMarkWidth = 3;
+    withlength.map(function(p, i) {
       var previous;
       previous = _.last(views);
       if (previous) {
@@ -37,17 +38,21 @@ Engine = {
           view: {
             hasLength: true,
             radius: 200,
-            startAngle: previous.view.endAngle + 3,
-            endAngle: (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3
+            unknownStart: previous.view.endAngle + 3,
+            unknownEnd: previous.view.endAngle + 8,
+            startAngle: previous.view.endAngle + 8,
+            endAngle: (i = withlength.length - 1) ? (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3 : (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3
           }
         });
       } else {
         return views.push({
           model: p,
           view: {
+            unknownStart: 0,
+            unknownEnd: 5,
             hasLength: true,
             radius: 200,
-            startAngle: 1,
+            startAngle: 5,
             endAngle: scale.val(p.get("interactor").get("length"))
           }
         });

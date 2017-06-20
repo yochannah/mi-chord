@@ -26,9 +26,15 @@ Draw =
 
     path.join " "
 
+  arc2: ({unknownStart, unknownEnd, radius}) ->
+    @arc {startAngle: unknownStart, endAngle: unknownEnd, radius: radius}
+
 
   center: ({startAngle, endAngle, radius}, thickness = 20) ->
-    {x, y} = ptc radius - 30, (startAngle + endAngle) / 2
+    {x, y} = ptc radius + 30, (startAngle + endAngle) / 2
+
+  centerUnknown: ({unknownStart, unknownEnd, radius}, thickness = 20) ->
+    {x, y} = ptc radius + 10, (unknownStart + unknownEnd) / 2
 
 
   ticks: ({startAngle, endAngle, radius}, thickness = 20) ->
@@ -78,11 +84,15 @@ Draw =
     # don't cross eachother
     participants = _.sortBy participants, "startAngle"
 
-    participants.map ({startAngle, endAngle, radius}, i) ->
+    participants.map (view, i) =>
+
+      {startAngle, endAngle, radius} = view
+      centered = @center(view)
 
       next = if (i + 1) < participants.length then participants[i + 1] else participants[0]
 
       parts.push [
+
 
         if i is 0
           if startAngle is endAngle

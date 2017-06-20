@@ -118,11 +118,23 @@ Link = (function(superClass) {
         ref1 = _this.props.views[feature.get("participant").get("id")], participantView = ref1.view, ParticipantModel = ref1.model;
         scale = Engine.scale([participantView.startAngle, participantView.endAngle], [0, ParticipantModel.get("interactor").get("length")]);
         return sequenceData = feature.get("sequenceData").map(function(s) {
-          return views.push({
-            radius: participantView.radius,
-            startAngle: scale.val(s.get("start")),
-            endAngle: scale.val(s.get("end"))
-          });
+          var end, halfway, start;
+          start = s.get("start");
+          end = s.get("start");
+          if (start === null && end === null) {
+            halfway = (participantView.unknownStart + participantView.unknownEnd) / 2;
+            return views.push({
+              radius: participantView.radius,
+              startAngle: participantView.unknownStart,
+              endAngle: participantView.unknownEnd
+            });
+          } else {
+            return views.push({
+              radius: participantView.radius,
+              startAngle: scale.val(s.get("start")),
+              endAngle: scale.val(s.get("end"))
+            });
+          }
         });
       };
     })(this));

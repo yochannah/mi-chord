@@ -75,7 +75,7 @@ Participant = (function(superClass) {
         }) : void 0;
       };
     })(this));
-    return g({}, this.props.view.hasLength === true ? path({
+    return g({}, this.props.view.hasLength === true ? g({}, path({
       fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
       onMouseEnter: (function(_this) {
         return function() {
@@ -89,7 +89,21 @@ Participant = (function(superClass) {
       })(this),
       className: "participant",
       d: Draw.arc(this.props.view)
-    }) : ((ref1 = ptc(this.props.view.radius, this.props.view.endAngle), cx = ref1.x, cy = ref1.y, ref1), circle({
+    }), path({
+      fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
+      onMouseEnter: (function(_this) {
+        return function() {
+          return _this.focusMe(true);
+        };
+      })(this),
+      onMouseLeave: (function(_this) {
+        return function() {
+          return _this.focusMe(false);
+        };
+      })(this),
+      className: "participantUnknown",
+      d: Draw.arc2(this.props.view)
+    })) : ((ref1 = ptc(this.props.view.radius, this.props.view.endAngle), cx = ref1.x, cy = ref1.y, ref1), circle({
       cx: cx,
       cy: cy,
       className: "nolenpart",
@@ -103,17 +117,19 @@ Participant = (function(superClass) {
       startOffset: "50%"
     }, this.props.model.get("interactor").get("label"))), Regions, (function() {
       var i, len, ref2, results;
-      ref2 = Draw.ticks(this.props.view, 5);
-      results = [];
-      for (i = 0, len = ref2.length; i < len; i++) {
-        t = ref2[i];
-        results.push(path({
-          className: "tick",
-          d: t,
-          pointerEvents: "none"
-        }));
+      if (this.props.view.hasLength) {
+        ref2 = Draw.ticks(this.props.view, 5);
+        results = [];
+        for (i = 0, len = ref2.length; i < len; i++) {
+          t = ref2[i];
+          results.push(path({
+            className: "tick",
+            d: t,
+            pointerEvents: "none"
+          }));
+        }
+        return results;
       }
-      return results;
     }).call(this));
   };
 
