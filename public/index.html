@@ -71,7 +71,6 @@
 
 
     function loadChord(id) {
-        $("#target").empty();
         // Actually code to load mi-circle
         $.get("http://wwwdev.ebi.ac.uk/intact/complex-ws/export/" + id, function (data) {
             new MIModel(data).load().then(function (m) {
