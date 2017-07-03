@@ -1,78 +1,90 @@
-
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset='utf-8'>
     <link rel="stylesheet" type="text/css" href="css/circle.css">
     <script src="vendor/jquery/dist/jquery.min.js"></script>
-  </head>
-  <body>
+</head>
+<body>
 
-    <div id="target"></div>
-    <div>
-      <h4>Test Dashboard</h4>
-      <p>Hover over a participant to highlight its view in the chord diagram</p>
-      <ul id="dashboard"></div>
-    </div>
+<div id="target"></div>
+<select onchange="loadChord(this.value)">
+    <option value="EBI-9691559" default>EBI-9691559</option>
+    <option value="EBI-10887677">EBI-10887677</option>
+    <option value="EBI-9008420">EBI-9008420</option>
+    <option value="EBI-8790722">EBI-8790722</option>
+    <option value="EBI-1202920">EBI-1202920</option>
+</select>
+<div>
+    <h4>Test Dashboard</h4>
+    <p>Hover over a participant to highlight its view in the chord diagram</p>
+    <!--<ul id="dashboard">-->
+</div>
+</div>
 
-    <script src="dist/circle.js"></script>
-    <script src="vendor/mi-model/dist/mi-model.js"></script>
-    <!-- <script src="mi-model.js"></script> -->
+<script src="dist/circle.js"></script>
+<script src="vendor/mi-model/dist/mi-model.js"></script>
+<!-- <script src="mi-model.js"></script> -->
 
-    <script>
+<script>
 
-      var circle;
-      var model;
+    var circle;
+    var model;
+//    var id = 'EBI-9691559';
 
-      // "json/EBI-1202920.json"
-      // "json/EBI-8869931.json"
-      // "json/EBI-9082861.json"
-      // "json/EBI-9691559.json" // Working
-      // "json/EBI-9008420.json"
-      // "json/EBI-9008283.json"
-      // json/EBI-10828997.json // split
+    // "json/EBI-1202920.json"
+    // "json/EBI-8869931.json"
+    // "json/EBI-9082861.json"
+    // "json/EBI-9691559.json" // Working
+    // "json/EBI-9008420.json"
+    // "json/EBI-9008283.json"
+    // json/EBI-10828997.json // split
 
-      var buildDashboard = function(model) {
+    var buildDashboard = function (model) {
 
 
         var db = $("#dashboard");
 
         model.get("interactions").at(0).get("participants").map(function (p) {
 
-          var focusOn = function(m) {
-            return function(event) {
-              m.set("focus", true);
+            var focusOn = function (m) {
+                return function (event) {
+                    m.set("focus", true);
+                }
             }
-          }
 
-          var focusOff = function(m) {
-            return function(event) {
-              m.set("focus", false);
+            var focusOff = function (m) {
+                return function (event) {
+                    m.set("focus", false);
+                }
             }
-          }
 
-          var li = $("<li></li>");
-          li.text(p.get("interactor").get("label"));
-          li.hover(focusOn(p), focusOff(p));
-          $("#dashboard").append(li);
+            var li = $("<li></li>");
+            li.text(p.get("interactor").get("label"));
+            li.hover(focusOn(p), focusOff(p));
+            $("#dashboard").append(li);
 
         });
 
 
+    }
 
-      }
 
-      // Actually code to load mi-circle
-      $.get( "json/EBI-9691559.json", function( data ) {
-        new MIModel(data).load().then(function(m) {
-          var circle = new Circle("#target", m);
-          window.m = m;
-          buildDashboard(m);
-          console.log("circle", circle);
+    function loadChord(id) {
+        $("#target").empty();
+        // Actually code to load mi-circle
+        $.get("http://wwwdev.ebi.ac.uk/intact/complex-ws/export/" + id, function (data) {
+            new MIModel(data).load().then(function (m) {
+                var circle = new Circle("#target", m);
+                window.m = m;
+                buildDashboard(m);
+                console.log("circle", circle);
+            });
         });
-      });
+    }
 
-    </script>
+    loadChord('EBI-9691559');
+</script>
 
-  </body>
+</body>
 </html>
