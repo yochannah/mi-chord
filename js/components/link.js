@@ -71,7 +71,7 @@ Link = (function(superClass) {
   }
 
   Link.prototype.componentDidMount = function() {
-    return this.props.model.on('add change remove', this.forceUpdate.bind(this, null), this);
+    return this.props.model.on('add change remove all *', this.forceUpdate.bind(this, null), this);
   };
 
   Link.prototype.componentWillUnmount = function() {
@@ -140,6 +140,7 @@ Link = (function(superClass) {
     })(this));
     parsed = null;
     return g({
+      key: this.props.model.get("key"),
       className: "linkGroup",
       onMouseOver: (function(_this) {
         return function() {

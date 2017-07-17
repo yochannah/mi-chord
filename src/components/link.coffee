@@ -34,7 +34,7 @@ class Link extends React.Component
   componentDidMount: ->
     # Whenever there may be a change in the Backbone data, trigger a reconcile.
 
-    @props.model.on 'add change remove', @forceUpdate.bind(this, null), this
+    @props.model.on 'add change remove all *', @forceUpdate.bind(this, null), this
 
   componentWillUnmount: ->
     # Ensure that we clean up any dangling references when the component is
@@ -105,6 +105,7 @@ class Link extends React.Component
     # parsed = parser Draw.link(views)
 
     g
+      key: @props.model.get("key")
       className: "linkGroup"
       onMouseOver: => @focusParticipants true
       onMouseLeave: => @focusParticipants false

@@ -76,8 +76,9 @@ SVG = (function(superClass) {
   };
 
   SVG.prototype.render = function() {
-    var Links, Participants, Unknowns, defpaths, interaction, links, participants, s, views;
+    var Links, Participants, Unknowns, defpaths, interaction, interactionId, links, participants, s, views;
     interaction = this.props.model.get("interactions").at(0);
+    interactionId = this.props.model.get("interactions").at(0).get("id");
     participants = interaction.get("participants");
     links = interaction.get("links");
     views = Engine.layout(participants);
@@ -132,16 +133,17 @@ SVG = (function(superClass) {
     })));
     s = Chroma.scale('Spectral').domain([0, links.length - 1]);
     Participants = _.values(views).map(function(p) {
-      p.key = p.model.get("id");
+      p.model.set("key", interactionId + ":" + p.model.get("id"));
       return Participant(p);
     });
     Unknowns = _.values(views).map(function(p) {
       if (p.view.hasLength) {
-        p.key = p.model.get("id");
+        p.model.set("key", interactionId + ":" + p.model.get("id"));
         return Unknown(p);
       }
     });
     Links = links.map(function(l, i) {
+      l.set("key", interactionId + ":" + l.get("id"));
       return Link({
         model: l,
         views: views,
@@ -159,6 +161,7 @@ SVG = (function(superClass) {
         shapeRendering: "geometricPrecision"
       }
     }, g({
+      key: interactionId + ":links",
       className: "participants"
     }, Participants), g({
       className: "links",

@@ -144,7 +144,7 @@ Link = (function(superClass) {
   }
 
   Link.prototype.componentDidMount = function() {
-    return this.props.model.on('add change remove', this.forceUpdate.bind(this, null), this);
+    return this.props.model.on('add change remove all *', this.forceUpdate.bind(this, null), this);
   };
 
   Link.prototype.componentWillUnmount = function() {
@@ -213,6 +213,7 @@ Link = (function(superClass) {
     })(this));
     parsed = null;
     return g({
+      key: this.props.model.get("key"),
       className: "linkGroup",
       onMouseOver: (function(_this) {
         return function() {
@@ -330,7 +331,9 @@ Participant = (function(superClass) {
         }) : void 0;
       };
     })(this));
-    return g({}, this.props.view.hasLength === true ? g({}, path({
+    return g({
+      key: this.props.model.get("key")
+    }, this.props.view.hasLength === true ? g({}, path({
       fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
       onMouseEnter: (function(_this) {
         return function() {
@@ -506,8 +509,9 @@ SVG = (function(superClass) {
   };
 
   SVG.prototype.render = function() {
-    var Links, Participants, Unknowns, defpaths, interaction, links, participants, s, views;
+    var Links, Participants, Unknowns, defpaths, interaction, interactionId, links, participants, s, views;
     interaction = this.props.model.get("interactions").at(0);
+    interactionId = this.props.model.get("interactions").at(0).get("id");
     participants = interaction.get("participants");
     links = interaction.get("links");
     views = Engine.layout(participants);
@@ -562,16 +566,17 @@ SVG = (function(superClass) {
     })));
     s = Chroma.scale('Spectral').domain([0, links.length - 1]);
     Participants = _.values(views).map(function(p) {
-      p.key = p.model.get("id");
+      p.model.set("key", interactionId + ":" + p.model.get("id"));
       return Participant(p);
     });
     Unknowns = _.values(views).map(function(p) {
       if (p.view.hasLength) {
-        p.key = p.model.get("id");
+        p.model.set("key", interactionId + ":" + p.model.get("id"));
         return Unknown(p);
       }
     });
     Links = links.map(function(l, i) {
+      l.set("key", interactionId + ":" + l.get("id"));
       return Link({
         model: l,
         views: views,
@@ -589,6 +594,7 @@ SVG = (function(superClass) {
         shapeRendering: "geometricPrecision"
       }
     }, g({
+      key: interactionId + ":links",
       className: "participants"
     }, Participants), g({
       className: "links",

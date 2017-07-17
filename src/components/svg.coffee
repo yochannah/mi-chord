@@ -20,6 +20,8 @@ class SVG extends React.Component
 
   componentDidMount: ->
 
+    # @props.model.on 'add change remove', @forceUpdate.bind(this, null), this
+
     Messenger.subscribe "label", (m) => @setState {label: m}
 
     # https://stackoverflow.com/questions/10298658/mouse-position-inside-autoscaled-svg
@@ -41,6 +43,9 @@ class SVG extends React.Component
   render: ->
 
     interaction = @props.model.get("interactions").at(0)
+
+    interactionId = @props.model.get("interactions").at(0).get("id")
+
     participants = interaction.get "participants"
     links = interaction.get "links"
     views = Engine.layout participants
@@ -63,22 +68,25 @@ class SVG extends React.Component
     s = Chroma.scale('Spectral').domain([0, links.length - 1]);
 
     Participants = _.values(views).map (p) ->
-      p.key = p.model.get("id")
+      p.model.set "key", interactionId + ":" + p.model.get("id")
       return Participant p
 
     Unknowns = _.values(views).map (p) ->
       if p.view.hasLength
-        p.key = p.model.get("id")
+        p.model.set "key", interactionId + ":" + p.model.get("id")
         return Unknown p
 
+
+
     Links = links.map (l, i) ->
+      l.set "key", interactionId + ":" + l.get("id")
       return Link model: l, views: views, view: fill: s(i).hex()
 
     svg {className: "mi-chord", ref: "svg", viewBox: "0 0 500 500"},
       defs {}, defpaths
       g {style: shapeRendering: "geometricPrecision"},
         # text {}, @props.model.get("interactions").at(0).get("id")
-        g {className: "participants"}, Participants
+        g {key: interactionId + ":links", className: "participants"}, Participants
         g {className: "links", style: transform: "translate(250px,250px)"}, Links
         if @state.label? then Tooltip {rootsvg: @state.rootsvg, message: @state.label, mouse: @state.mouse}
       g {className: "unknowns"}, Unknowns

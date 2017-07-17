@@ -64,7 +64,7 @@ class Participant extends React.Component
             startAngle: scale.val s.get("start")
             endAngle: scale.val s.get("end")
 
-    g {},
+    g {key: @props.model.get("key")},
       if @props.view.hasLength is true
         g {},
           path

@@ -75,7 +75,9 @@ Participant = (function(superClass) {
         }) : void 0;
       };
     })(this));
-    return g({}, this.props.view.hasLength === true ? g({}, path({
+    return g({
+      key: this.props.model.get("key")
+    }, this.props.view.hasLength === true ? g({}, path({
       fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
       onMouseEnter: (function(_this) {
         return function() {
