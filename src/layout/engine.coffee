@@ -22,9 +22,10 @@ Engine =
     # Get their total
     sum = _.reduce lengths, ((total, num) -> total + num), 0
 
-
     # Normalize the length in degrees
     scale = @scale([0, 360 - (nolength.length * molRadius)], [0, sum])
+
+
 
     # Place the participants around a circle with start and end angles
     views = []

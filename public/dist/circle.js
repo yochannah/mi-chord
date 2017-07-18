@@ -228,7 +228,7 @@ Link = (function(superClass) {
     }, path({
       className: "link",
       opacity: "0.9",
-      fill: this.props.view.fill,
+      fill: this.props.model.get("fill"),
       d: Draw.link(views),
       style: {
         opacity: 0.8
@@ -509,7 +509,7 @@ SVG = (function(superClass) {
   };
 
   SVG.prototype.render = function() {
-    var Links, Participants, Unknowns, defpaths, interaction, interactionId, links, participants, s, views;
+    var Links, Participants, Unknowns, defpaths, interaction, interactionId, links, participants, views;
     interaction = this.props.model.get("interactions").at(0);
     interactionId = this.props.model.get("interactions").at(0).get("id");
     participants = interaction.get("participants");
@@ -564,7 +564,6 @@ SVG = (function(superClass) {
       height: 1,
       fill: "url(#rgrad)"
     })));
-    s = Chroma.scale('Spectral').domain([0, links.length - 1]);
     Participants = _.values(views).map(function(p) {
       p.model.set("key", interactionId + ":" + p.model.get("id"));
       return Participant(p);
@@ -579,10 +578,7 @@ SVG = (function(superClass) {
       l.set("key", interactionId + ":" + l.get("id"));
       return Link({
         model: l,
-        views: views,
-        view: {
-          fill: s(i).hex()
-        }
+        views: views
       });
     });
     return svg({
@@ -746,18 +742,6 @@ Unknown = (function(superClass) {
 
 module.exports = Unknown;
 
-({
-  startAngle: 123,
-  endAngle: 345,
-  radius: 50
-});
-
-({
-  startAngle: 123,
-  endAngle: 345,
-  radius: 30
-});
-
 },{"../layout/draw":10,"react":206}],9:[function(require,module,exports){
 var Main, React, ReactDOM, SVG;
 
@@ -913,7 +897,7 @@ Engine = {
     sum = _.reduce(lengths, (function(total, num) {
       return total + num;
     }), 0);
-    scale = this.scale([0, 360 - (nolength.length * molRadius)], [0, sum]);
+    scale = this.scale([0, 360], [0, sum]);
     views = [];
     nolengthviews = [];
     questionMarkWidth = 3;

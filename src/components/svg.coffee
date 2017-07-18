@@ -64,9 +64,6 @@ class SVG extends React.Component
     defpaths.push mask {id: "fademask", maskContentUnits: "objectBoundingBox"},
       rect {x: 0, y: 0, width: 1, height: 1, fill: "url(#rgrad)"}
 
-
-    s = Chroma.scale('Spectral').domain([0, links.length - 1]);
-
     Participants = _.values(views).map (p) ->
       p.model.set "key", interactionId + ":" + p.model.get("id")
       return Participant p
@@ -76,11 +73,9 @@ class SVG extends React.Component
         p.model.set "key", interactionId + ":" + p.model.get("id")
         return Unknown p
 
-
-
     Links = links.map (l, i) ->
       l.set "key", interactionId + ":" + l.get("id")
-      return Link model: l, views: views, view: fill: s(i).hex()
+      return Link model: l, views: views
 
     svg {className: "mi-chord", ref: "svg", viewBox: "0 0 500 500"},
       defs {}, defpaths

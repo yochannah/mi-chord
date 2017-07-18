@@ -76,7 +76,7 @@ SVG = (function(superClass) {
   };
 
   SVG.prototype.render = function() {
-    var Links, Participants, Unknowns, defpaths, interaction, interactionId, links, participants, s, views;
+    var Links, Participants, Unknowns, defpaths, interaction, interactionId, links, participants, views;
     interaction = this.props.model.get("interactions").at(0);
     interactionId = this.props.model.get("interactions").at(0).get("id");
     participants = interaction.get("participants");
@@ -131,7 +131,6 @@ SVG = (function(superClass) {
       height: 1,
       fill: "url(#rgrad)"
     })));
-    s = Chroma.scale('Spectral').domain([0, links.length - 1]);
     Participants = _.values(views).map(function(p) {
       p.model.set("key", interactionId + ":" + p.model.get("id"));
       return Participant(p);
@@ -146,10 +145,7 @@ SVG = (function(superClass) {
       l.set("key", interactionId + ":" + l.get("id"));
       return Link({
         model: l,
-        views: views,
-        view: {
-          fill: s(i).hex()
-        }
+        views: views
       });
     });
     return svg({

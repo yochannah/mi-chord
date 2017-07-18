@@ -155,7 +155,7 @@ Link = (function(superClass) {
     }, path({
       className: "link",
       opacity: "0.9",
-      fill: this.props.view.fill,
+      fill: this.props.model.get("fill"),
       d: Draw.link(views),
       style: {
         opacity: 0.8

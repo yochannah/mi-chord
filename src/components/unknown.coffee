@@ -18,12 +18,3 @@ class Unknown extends React.Component
         text {className: "unknownLabel", textAnchor: "middle", dy: "4"}, "?"
 
 module.exports = Unknown
-
-
-{startAngle: 123
-endAngle: 345
-radius: 50}
-
-{startAngle: 123
-endAngle: 345
-radius: 30}

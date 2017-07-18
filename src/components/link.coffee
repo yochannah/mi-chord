@@ -67,17 +67,13 @@ class Link extends React.Component
 
   render: ->
 
-
-
     views = []
 
     # Walk through each feature in the link
     @props.model.get("features").map (feature) =>
 
-
       # Get the view and model for the parent participant
       {view: participantView, model: ParticipantModel} = @props.views[feature.get("participant").get("id")]
-
 
       # Create a scale so we know where to start/stop our path
       scale = Engine.scale([participantView.startAngle, participantView.endAngle],
@@ -120,7 +116,7 @@ class Link extends React.Component
         className: "link"
         opacity: "0.9"
         # fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
-        fill: @props.view.fill
+        fill: @props.model.get("fill")
         d: Draw.link views
         style: opacity: 0.8
 
