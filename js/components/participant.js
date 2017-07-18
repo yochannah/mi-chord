@@ -1,4 +1,4 @@
-var Draw, Engine, Label, Messenger, Participant, React, Region, circle, g, path, polarToCartesian, ptc, rect, ref, text, textPath,
+var Draw, Engine, Messenger, Participant, React, Region, circle, g, path, polarToCartesian, ptc, rect, ref, text, textPath,
   bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -10,8 +10,6 @@ Engine = require('../layout/engine');
 Draw = require('../layout/draw');
 
 Region = React.createFactory(require('./region'));
-
-Label = React.createFactory(require('./label'));
 
 polarToCartesian = require('../layout/engine').polarToCartesian;
 
