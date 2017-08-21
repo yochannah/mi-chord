@@ -29,48 +29,30 @@ Engine = {
     views = [];
     nolengthviews = [];
     questionMarkWidth = 3;
-    withlength.map(function(p, i) {
-      var previous;
-      previous = _.last(views);
-      if (previous) {
-        return views.push({
-          model: p,
-          view: {
-            hasLength: true,
-            radius: 200,
-            unknownStart: previous.view.endAngle + 3,
-            unknownEnd: previous.view.endAngle + 8,
-            startAngle: previous.view.endAngle + 8,
-            endAngle: (i = withlength.length - 1) ? (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3 : (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3
-          }
-        });
-      } else {
-        return views.push({
-          model: p,
-          view: {
-            unknownStart: 0,
-            unknownEnd: 5,
-            hasLength: true,
-            radius: 200,
-            startAngle: 5,
-            endAngle: scale.val(p.get("interactor").get("length"))
-          }
-        });
-      }
-    });
-    nolength.map(function(p, i) {
-      var previous;
-      previous = _.last(views);
-      return views.push({
-        model: p,
+    views = _.reduce(withlength, (function(total, next, memo) {
+      var previousLengths, t, v;
+      previousLengths = _.reduce(total, (function(count, p) {
+        return count + p.model.get("interactor").get("length");
+      }), 0);
+      t = {
+        startAngle: scale.val(previousLengths),
+        endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
+      };
+      console.log("t", t);
+      v = {
+        model: next,
         view: {
-          hasLength: false,
-          radius: 210,
-          startAngle: previous.view.endAngle + molRadius,
-          endAngle: previous.view.endAngle + molRadius
+          hasLength: true,
+          radius: 200,
+          startAngle: scale.val(previousLengths),
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths),
+          unknownStart: scale.val(previousLengths),
+          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths)
         }
-      });
-    });
+      };
+      return total.concat([v]);
+    }), []);
+    console.log("views", views);
     return wind(views, function(d) {
       return d.model.get("id");
     });

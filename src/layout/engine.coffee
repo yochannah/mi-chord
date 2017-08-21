@@ -34,46 +34,74 @@ Engine =
 
     questionMarkWidth = 3
 
-    withlength.map (p, i) ->
+    views = _.reduce withlength, ((total, next, memo) ->
 
-      previous = _.last views
+      previousLengths = _.reduce total, ((count, p) -> count + p.model.get("interactor").get("length")), 0
 
-      if previous
-        views.push
-          model: p
-          view:
-            hasLength: true
-            radius: 200
-            unknownStart: previous.view.endAngle + 3
-            unknownEnd: previous.view.endAngle + 8
-            startAngle: previous.view.endAngle + 8
-            endAngle:
-              if i = withlength.length - 1
-                (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 3
-              else
-                (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 3
-      else
-        views.push
-          model: p,
-          view:
-            unknownStart: 0
-            unknownEnd: 5
-            hasLength: true
-            radius: 200
-            startAngle: 5
-            endAngle: scale.val p.get("interactor").get("length")
+      t =
+        startAngle: scale.val(previousLengths),
+        endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
 
-    nolength.map (p, i) ->
+      console.log "t", t
 
-      previous = _.last views
-
-      views.push
-        model: p,
+      v =
+        model: next
         view:
-          hasLength: false
-          radius: 210
-          startAngle: previous.view.endAngle + molRadius
-          endAngle: previous.view.endAngle + molRadius
+          hasLength: true
+          radius: 200
+          startAngle: scale.val(previousLengths)
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
+
+          unknownStart: scale.val(previousLengths)
+          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths)
+
+
+      # console.log "ban", v
+
+      return total.concat [v]), []
+
+    console.log "views", views
+
+    # withlength.map (p, i) ->
+    #
+    #   previous = _.last views
+    #
+    #   if previous
+    #     views.push
+    #       model: p
+    #       view:
+    #         hasLength: true
+    #         radius: 200
+    #         unknownStart: previous.view.endAngle + 3
+    #         unknownEnd: previous.view.endAngle + 8
+    #         startAngle: previous.view.endAngle + 8
+    #         endAngle:
+    #           if i = withlength.length - 1
+    #             (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 3
+    #           else
+    #             (scale.val p.get("interactor").get("length")) + previous.view.endAngle - 3
+    #   else
+    #     views.push
+    #       model: p,
+    #       view:
+    #         unknownStart: 0
+    #         unknownEnd: 5
+    #         hasLength: true
+    #         radius: 200
+    #         startAngle: 5
+    #         endAngle: scale.val p.get("interactor").get("length")
+    #
+    # nolength.map (p, i) ->
+    #
+    #   previous = _.last views
+    #
+    #   views.push
+    #     model: p,
+    #     view:
+    #       hasLength: false
+    #       radius: 210
+    #       startAngle: previous.view.endAngle + molRadius
+    #       endAngle: previous.view.endAngle + molRadius
 
     return wind views, (d) -> d.model.get("id")
 
