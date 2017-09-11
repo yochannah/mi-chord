@@ -126,8 +126,8 @@ Link = (function(superClass) {
             halfway = (participantView.unknownStart + participantView.unknownEnd) / 2;
             return views.push({
               radius: participantView.radius,
-              startAngle: participantView.unknownStart,
-              endAngle: participantView.unknownEnd
+              startAngle: participantView.unknownStart + 2.5,
+              endAngle: participantView.unknownStart + 2.5
             });
           } else {
             return views.push({
@@ -238,7 +238,7 @@ Participant = (function(superClass) {
   };
 
   Participant.prototype.render = function() {
-    var Regions, cx, cy, ref1, t;
+    var Regions, cx, cy, mid, ref1, t;
     Regions = [];
     this.props.model.get("features").map((function(_this) {
       return function(f) {
@@ -292,14 +292,12 @@ Participant = (function(superClass) {
       cy: cy,
       className: "nolenpart",
       r: 10
-    })), text({
+    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, console.log("MID", mid), text({
       className: "participantLabel",
-      textAnchor: "middle",
-      alignmentBaseline: "middle"
-    }, React.createElement("textPath", {
-      xlinkHref: "#tp" + this.props.model.get("id"),
-      startOffset: "50%"
-    }, this.props.model.get("interactor").get("label"))), Regions, (function() {
+      x: Draw.center(this.props.view).x,
+      y: Draw.center(this.props.view).y,
+      textAnchor: mid <= 180 ? "start" : "end"
+    }, "Testing"), Regions, (function() {
       var i, len, ref2, results;
       if (this.props.view.hasLength) {
         ref2 = Draw.ticks(this.props.view, 5);
@@ -650,7 +648,7 @@ Unknown = (function(superClass) {
 
   Unknown.prototype.render = function() {
     var ref1, x, y;
-    ref1 = Draw.centerUnknown(this.props.view), x = ref1.x, y = ref1.y;
+    ref1 = Draw.startUnknown(this.props.view), x = ref1.x, y = ref1.y;
     return g({
       transform: "translate(250, 250)"
     }, g({
@@ -740,6 +738,14 @@ Draw = {
     }
     return ref = ptc(radius + 10, (unknownStart + unknownEnd) / 2), x = ref.x, y = ref.y, ref;
   },
+  startUnknown: function(arg, thickness) {
+    var radius, ref, unknownEnd, unknownStart, x, y;
+    unknownStart = arg.unknownStart, unknownEnd = arg.unknownEnd, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    return ref = ptc(radius + 10, unknownStart + 2.5), x = ref.x, y = ref.y, ref;
+  },
   ticks: function(arg, thickness) {
     var angle, buildLine, endAngle, j, radius, ref, ref1, results, startAngle;
     startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
@@ -814,6 +820,7 @@ Engine = {
       length = p.get("interactor").get("length");
       return length === void 0 || length === null;
     });
+    console.log("no len", nolength);
     withlength = participants.filter(function(p) {
       var length;
       length = p.get("interactor").get("length");
@@ -823,29 +830,24 @@ Engine = {
     sum = _.reduce(lengths, (function(total, num) {
       return total + num;
     }), 0);
-    scale = this.scale([0, 360 - (nolength.length * molRadius)], [0, sum]);
+    scale = this.scale([0, 360], [0, sum]);
     views = [];
     nolengthviews = [];
     questionMarkWidth = 3;
     views = _.reduce(withlength, (function(total, next, memo) {
-      var previousLengths, t, v;
+      var previousLengths, v;
       previousLengths = _.reduce(total, (function(count, p) {
         return count + p.model.get("interactor").get("length");
       }), 0);
-      t = {
-        startAngle: scale.val(previousLengths),
-        endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
-      };
-      console.log("t", t);
       v = {
         model: next,
         view: {
           hasLength: true,
-          radius: 200,
-          startAngle: scale.val(previousLengths),
-          endAngle: scale.val(next.get("interactor").get("length") + previousLengths),
+          radius: 150,
+          startAngle: scale.val(previousLengths) + 5,
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5,
           unknownStart: scale.val(previousLengths),
-          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths)
+          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
         }
       };
       return total.concat([v]);

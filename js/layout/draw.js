@@ -46,6 +46,14 @@ Draw = {
     }
     return ref = ptc(radius + 10, (unknownStart + unknownEnd) / 2), x = ref.x, y = ref.y, ref;
   },
+  startUnknown: function(arg, thickness) {
+    var radius, ref, unknownEnd, unknownStart, x, y;
+    unknownStart = arg.unknownStart, unknownEnd = arg.unknownEnd, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    return ref = ptc(radius + 10, unknownStart + 2.5), x = ref.x, y = ref.y, ref;
+  },
   ticks: function(arg, thickness) {
     var angle, buildLine, endAngle, j, radius, ref, ref1, results, startAngle;
     startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;

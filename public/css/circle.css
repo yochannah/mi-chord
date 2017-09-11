@@ -5,8 +5,8 @@ body {
 }
 .mi-chord {
   background-color: white;
-  width: 500px;
-  height: 500px;
+  width: 800px;
+  height: 800px;
 }
 .participants {
   transform: translate(250px, 250px);

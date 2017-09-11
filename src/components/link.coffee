@@ -88,8 +88,8 @@ class Link extends React.Component
           halfway = (participantView.unknownStart + participantView.unknownEnd) / 2
           views.push
             radius: participantView.radius
-            startAngle: participantView.unknownStart
-            endAngle: participantView.unknownEnd
+            startAngle: participantView.unknownStart + 2.5
+            endAngle: participantView.unknownStart + 2.5
         else
           views.push
             radius: participantView.radius

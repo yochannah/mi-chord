@@ -54,7 +54,7 @@ Participant = (function(superClass) {
   };
 
   Participant.prototype.render = function() {
-    var Regions, cx, cy, ref1, t;
+    var Regions, cx, cy, mid, ref1, t;
     Regions = [];
     this.props.model.get("features").map((function(_this) {
       return function(f) {
@@ -108,14 +108,12 @@ Participant = (function(superClass) {
       cy: cy,
       className: "nolenpart",
       r: 10
-    })), text({
+    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, console.log("MID", mid), text({
       className: "participantLabel",
-      textAnchor: "middle",
-      alignmentBaseline: "middle"
-    }, React.createElement("textPath", {
-      xlinkHref: "#tp" + this.props.model.get("id"),
-      startOffset: "50%"
-    }, this.props.model.get("interactor").get("label"))), Regions, (function() {
+      x: Draw.center(this.props.view).x,
+      y: Draw.center(this.props.view).y,
+      textAnchor: mid <= 180 ? "start" : "end"
+    }, "Testing"), Regions, (function() {
       var i, len, ref2, results;
       if (this.props.view.hasLength) {
         ref2 = Draw.ticks(this.props.view, 5);

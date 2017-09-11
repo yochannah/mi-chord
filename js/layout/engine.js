@@ -16,6 +16,7 @@ Engine = {
       length = p.get("interactor").get("length");
       return length === void 0 || length === null;
     });
+    console.log("no len", nolength);
     withlength = participants.filter(function(p) {
       var length;
       length = p.get("interactor").get("length");
@@ -25,29 +26,24 @@ Engine = {
     sum = _.reduce(lengths, (function(total, num) {
       return total + num;
     }), 0);
-    scale = this.scale([0, 360 - (nolength.length * molRadius)], [0, sum]);
+    scale = this.scale([0, 360], [0, sum]);
     views = [];
     nolengthviews = [];
     questionMarkWidth = 3;
     views = _.reduce(withlength, (function(total, next, memo) {
-      var previousLengths, t, v;
+      var previousLengths, v;
       previousLengths = _.reduce(total, (function(count, p) {
         return count + p.model.get("interactor").get("length");
       }), 0);
-      t = {
-        startAngle: scale.val(previousLengths),
-        endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
-      };
-      console.log("t", t);
       v = {
         model: next,
         view: {
           hasLength: true,
-          radius: 200,
-          startAngle: scale.val(previousLengths),
-          endAngle: scale.val(next.get("interactor").get("length") + previousLengths),
+          radius: 150,
+          startAngle: scale.val(previousLengths) + 5,
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5,
           unknownStart: scale.val(previousLengths),
-          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths)
+          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
         }
       };
       return total.concat([v]);

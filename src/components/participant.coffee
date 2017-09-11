@@ -82,14 +82,28 @@ class Participant extends React.Component
       else
         {x: cx, y: cy} = ptc @props.view.radius, @props.view.endAngle
         circle {cx: cx, cy: cy, className: "nolenpart", r: 10 }
+      # {x: x1, y: y1} = (ptc @props.view.radius, @props.view.endAngle)
+      # console.log "xy", x, y
+
+      # participantCenter = Draw.center(@props.view)
+      # console.log "C", participantCenter.x, participantCenter.y
+      mid = (@props.view.endAngle + @props.view.startAngle) / 2
+      console.log "MID", mid
+
       text {
         className: "participantLabel",
-        textAnchor: "middle",
-        alignmentBaseline: "middle"},
-        React.createElement "textPath", {
-          xlinkHref: "#tp" + @props.model.get("id"),
-          startOffset: "50%"
-        }, @props.model.get("interactor").get("label")
+        x: Draw.center(@props.view).x,
+        y: Draw.center(@props.view).y,
+        textAnchor: if mid <= 180 then "start" else "end"
+        }, "Testing"
+      # text {
+      #   className: "participantLabel",
+      #   textAnchor: "middle",
+      #   alignmentBaseline: "middle"},
+      #   React.createElement "textPath", {
+      #     xlinkHref: "#tp" + @props.model.get("id"),
+      #     startOffset: "50%"
+      #   }, @props.model.get("interactor").get("label")
       Regions
       if @props.view.hasLength
         for t in Draw.ticks @props.view, 5

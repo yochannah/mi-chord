@@ -36,6 +36,9 @@ Draw =
   centerUnknown: ({unknownStart, unknownEnd, radius}, thickness = 20) ->
     {x, y} = ptc radius + 10, (unknownStart + unknownEnd) / 2
 
+  startUnknown: ({unknownStart, unknownEnd, radius}, thickness = 20) ->
+    {x, y} = ptc radius + 10, unknownStart + 2.5
+
 
   ticks: ({startAngle, endAngle, radius}, thickness = 20) ->
 

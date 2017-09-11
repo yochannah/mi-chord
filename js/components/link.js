@@ -125,8 +125,8 @@ Link = (function(superClass) {
             halfway = (participantView.unknownStart + participantView.unknownEnd) / 2;
             return views.push({
               radius: participantView.radius,
-              startAngle: participantView.unknownStart,
-              endAngle: participantView.unknownEnd
+              startAngle: participantView.unknownStart + 2.5,
+              endAngle: participantView.unknownStart + 2.5
             });
           } else {
             return views.push({

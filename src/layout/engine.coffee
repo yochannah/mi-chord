@@ -13,6 +13,8 @@ Engine =
       length = p.get("interactor").get("length")
       length is undefined or length is null
 
+    console.log "no len", nolength
+
     withlength = participants.filter (p) ->
       length = p.get("interactor").get("length")
       length isnt undefined and length isnt null
@@ -23,7 +25,8 @@ Engine =
     sum = _.reduce lengths, ((total, num) -> total + num), 0
 
     # Normalize the length in degrees
-    scale = @scale([0, 360 - (nolength.length * molRadius)], [0, sum])
+    # scale = @scale([0, 360 - (nolength.length * molRadius)], [0, sum])
+    scale = @scale([0, 360], [0, sum])
 
 
 
@@ -38,22 +41,22 @@ Engine =
 
       previousLengths = _.reduce total, ((count, p) -> count + p.model.get("interactor").get("length")), 0
 
-      t =
-        startAngle: scale.val(previousLengths),
-        endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
-
-      console.log "t", t
+      # t =
+      #   startAngle: scale.val(previousLengths),
+      #   endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
+      #
+      # console.log "t", t
 
       v =
         model: next
         view:
           hasLength: true
-          radius: 200
-          startAngle: scale.val(previousLengths)
-          endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
+          radius: 150
+          startAngle: scale.val(previousLengths) + 5
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5
 
           unknownStart: scale.val(previousLengths)
-          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths)
+          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
 
 
       # console.log "ban", v
