@@ -108,12 +108,12 @@ Participant = (function(superClass) {
       cy: cy,
       className: "nolenpart",
       r: 10
-    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, console.log("MID", mid), text({
+    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, text({
       className: "participantLabel",
       x: Draw.center(this.props.view).x,
       y: Draw.center(this.props.view).y,
       textAnchor: mid <= 180 ? "start" : "end"
-    }, "Testing"), Regions, (function() {
+    }, this.props.model.get("interactor").get("label")), Regions, (function() {
       var i, len, ref2, results;
       if (this.props.view.hasLength) {
         ref2 = Draw.ticks(this.props.view, 5);

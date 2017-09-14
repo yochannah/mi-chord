@@ -16,7 +16,6 @@ Engine = {
       length = p.get("interactor").get("length");
       return length === void 0 || length === null;
     });
-    console.log("no len", nolength);
     withlength = participants.filter(function(p) {
       var length;
       length = p.get("interactor").get("length");
@@ -41,14 +40,13 @@ Engine = {
           hasLength: true,
           radius: 150,
           startAngle: scale.val(previousLengths) + 5,
-          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5,
-          unknownStart: scale.val(previousLengths),
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 10,
+          unknownStart: scale.val(next.get("interactor").get("length") + previousLengths) - 10,
           unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
         }
       };
       return total.concat([v]);
     }), []);
-    console.log("views", views);
     return wind(views, function(d) {
       return d.model.get("id");
     });

@@ -65,6 +65,9 @@ class Link extends React.Component
       Messenger.publish "label", null
 
 
+  allUnknown: (views) ->
+    _.every views, ({startAngle, endAngle}) -> startAngle is endAngle
+
   render: ->
 
     views = []
@@ -81,6 +84,7 @@ class Link extends React.Component
 
 
       # Walk through each sequenceData of the feature (could be more than one)
+
       sequenceData = feature.get("sequenceData").map (s) ->
         start = s.get("start")
         end = s.get("start")
@@ -100,6 +104,11 @@ class Link extends React.Component
     parsed = null
     # parsed = parser Draw.link(views)
 
+    # if views.length is 1 then console.log "LINK VIEWS", Draw.selfBinding views[0]
+    isEmpty = @allUnknown views
+
+
+
     g
       key: @props.model.get("key")
       className: "linkGroup"
@@ -112,12 +121,21 @@ class Link extends React.Component
       #       g {className: "x"},
       #         circle {cx: p.x, cy: p.y, r: 5 }
       #         text {dx: p.x + 15, dy: p.y + 15}, p.idx
-      path
-        className: "link"
-        opacity: "0.9"
-        # fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
-        fill: @props.model.get("fill")
-        d: Draw.link views
-        style: opacity: 0.8
+      if views.length is 1
+        path
+          className: "link emptyLink selfLink"
+          opacity: "0.9"
+          fill: "none"
+          d: Draw.selfBinding views[0]
+      else
+        cn = "link"
+        if isEmpty then cn += " emptyLink"
+        path
+          className: cn
+          opacity: "0.9"
+          # fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
+          fill: @props.model.get("fill")
+          d: Draw.link views
+          style: opacity: 0.8
 
 module.exports = Link

@@ -109,8 +109,16 @@ Link = (function(superClass) {
     }
   };
 
+  Link.prototype.allUnknown = function(views) {
+    return _.every(views, function(arg) {
+      var endAngle, startAngle;
+      startAngle = arg.startAngle, endAngle = arg.endAngle;
+      return startAngle === endAngle;
+    });
+  };
+
   Link.prototype.render = function() {
-    var parsed, views;
+    var cn, isEmpty, parsed, views;
     views = [];
     this.props.model.get("features").map((function(_this) {
       return function(feature) {
@@ -139,6 +147,7 @@ Link = (function(superClass) {
       };
     })(this));
     parsed = null;
+    isEmpty = this.allUnknown(views);
     return g({
       key: this.props.model.get("key"),
       className: "linkGroup",
@@ -152,15 +161,20 @@ Link = (function(superClass) {
           return _this.focusParticipants(false);
         };
       })(this)
-    }, path({
-      className: "link",
+    }, views.length === 1 ? path({
+      className: "link emptyLink selfLink",
+      opacity: "0.9",
+      fill: "none",
+      d: Draw.selfBinding(views[0])
+    }) : (cn = "link", isEmpty ? cn += " emptyLink" : void 0, path({
+      className: cn,
       opacity: "0.9",
       fill: this.props.model.get("fill"),
       d: Draw.link(views),
       style: {
         opacity: 0.8
       }
-    }));
+    })));
   };
 
   return Link;

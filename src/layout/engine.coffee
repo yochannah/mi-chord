@@ -13,8 +13,6 @@ Engine =
       length = p.get("interactor").get("length")
       length is undefined or length is null
 
-    console.log "no len", nolength
-
     withlength = participants.filter (p) ->
       length = p.get("interactor").get("length")
       length isnt undefined and length isnt null
@@ -45,7 +43,6 @@ Engine =
       #   startAngle: scale.val(previousLengths),
       #   endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
       #
-      # console.log "t", t
 
       v =
         model: next
@@ -53,17 +50,16 @@ Engine =
           hasLength: true
           radius: 150
           startAngle: scale.val(previousLengths) + 5
-          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 10
 
-          unknownStart: scale.val(previousLengths)
+          # unknownStart: scale.val(previousLengths)
+          unknownStart: scale.val(next.get("interactor").get("length") + previousLengths) - 10
           unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
 
 
-      # console.log "ban", v
-
       return total.concat [v]), []
 
-    console.log "views", views
+    # console.log "views", views
 
     # withlength.map (p, i) ->
     #

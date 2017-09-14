@@ -110,8 +110,16 @@ Link = (function(superClass) {
     }
   };
 
+  Link.prototype.allUnknown = function(views) {
+    return _.every(views, function(arg) {
+      var endAngle, startAngle;
+      startAngle = arg.startAngle, endAngle = arg.endAngle;
+      return startAngle === endAngle;
+    });
+  };
+
   Link.prototype.render = function() {
-    var parsed, views;
+    var cn, isEmpty, parsed, views;
     views = [];
     this.props.model.get("features").map((function(_this) {
       return function(feature) {
@@ -140,6 +148,7 @@ Link = (function(superClass) {
       };
     })(this));
     parsed = null;
+    isEmpty = this.allUnknown(views);
     return g({
       key: this.props.model.get("key"),
       className: "linkGroup",
@@ -153,15 +162,20 @@ Link = (function(superClass) {
           return _this.focusParticipants(false);
         };
       })(this)
-    }, path({
-      className: "link",
+    }, views.length === 1 ? path({
+      className: "link emptyLink selfLink",
+      opacity: "0.9",
+      fill: "none",
+      d: Draw.selfBinding(views[0])
+    }) : (cn = "link", isEmpty ? cn += " emptyLink" : void 0, path({
+      className: cn,
       opacity: "0.9",
       fill: this.props.model.get("fill"),
       d: Draw.link(views),
       style: {
         opacity: 0.8
       }
-    }));
+    })));
   };
 
   return Link;
@@ -292,12 +306,12 @@ Participant = (function(superClass) {
       cy: cy,
       className: "nolenpart",
       r: 10
-    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, console.log("MID", mid), text({
+    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, text({
       className: "participantLabel",
       x: Draw.center(this.props.view).x,
       y: Draw.center(this.props.view).y,
       textAnchor: mid <= 180 ? "start" : "end"
-    }, "Testing"), Regions, (function() {
+    }, this.props.model.get("interactor").get("label")), Regions, (function() {
       var i, len, ref2, results;
       if (this.props.view.hasLength) {
         ref2 = Draw.ticks(this.props.view, 5);
@@ -746,6 +760,50 @@ Draw = {
     }
     return ref = ptc(radius + 10, unknownStart + 2.5), x = ref.x, y = ref.y, ref;
   },
+  selfBinding: function(arg, thickness) {
+    var endAngle, ex, ey, path, q1, q2, q3, q4, q5, q6, radius, ref, ref1, ref2, ref3, ref4, ref5, ref6, startAngle, x, x1, x2, y, y1, y2;
+    startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    ref = ptc(radius + thickness, startAngle + 2.5), x = ref.x, y = ref.y;
+    ref1 = ptc(radius + thickness, startAngle - 2.5), ex = ref1.x, ey = ref1.y;
+    ref2 = ptc(radius + thickness + 20, startAngle + 5), x1 = ref2.x, y1 = ref2.y;
+    ref3 = ptc(radius + thickness + 10, startAngle + 7), q1 = ref3.x, q2 = ref3.y;
+    ref4 = ptc(radius + thickness + 20, startAngle - 5), x2 = ref4.x, y2 = ref4.y;
+    ref5 = ptc(radius + thickness + 30, startAngle), q3 = ref5.x, q4 = ref5.y;
+    ref6 = ptc(radius + thickness + 10, startAngle - 7), q5 = ref6.x, q6 = ref6.y;
+    path = ["M", x, y, "Q", q1, q2, x1, y1, "Q", q3, q4, x2, y2, "Q", q5, q6, ex, ey];
+    return path.join(" ");
+  },
+  selfBinding234: function(arg, thickness) {
+    var cx1, cx3, cx5, cx7, cy1, cy4, cy6, cy8, endAngle, path, radius, ref, ref1, ref2, ref3, ref4, ref5, ref6, startAngle, x, x1, x2, y, y1, y2;
+    startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    ref = ptc(radius + thickness, startAngle), x = ref.x, y = ref.y;
+    ref1 = ptc(radius + thickness + 20, startAngle + 5), x1 = ref1.x, y1 = ref1.y;
+    ref2 = ptc(radius + thickness + 20, startAngle + 7), cx1 = ref2.x, cy1 = ref2.y;
+    ref3 = ptc(radius + thickness + 20, startAngle + 5), cx3 = ref3.x, cy4 = ref3.y;
+    ref4 = ptc(radius + thickness + 20, startAngle - 5), x2 = ref4.x, y2 = ref4.y;
+    ref5 = ptc(radius + thickness + 20, startAngle - 7), cx5 = ref5.x, cy6 = ref5.y;
+    ref6 = ptc(radius + thickness + 20, startAngle - 5), cx7 = ref6.x, cy8 = ref6.y;
+    path = ["M", x, y, "C", cx1, cy1, cx3, cy4, x1, y1, "C", cx5, cy6, cx7, cy8, x2, y2, "Z"];
+    return path.join(" ");
+  },
+  selfBindingOld: function(arg, thickness) {
+    var endAngle, path, radius, ref, ref1, ref2, startAngle, x, x1, x2, y, y1, y2;
+    startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    ref = ptc(radius + thickness, startAngle), x = ref.x, y = ref.y;
+    ref1 = ptc(radius + thickness + 20, startAngle + 5), x1 = ref1.x, y1 = ref1.y;
+    ref2 = ptc(radius + thickness + 20, startAngle - 5), x2 = ref2.x, y2 = ref2.y;
+    path = ["M", x, y, "L", x1, y1, "L", x2, y2];
+    return path.join(" ");
+  },
   ticks: function(arg, thickness) {
     var angle, buildLine, endAngle, j, radius, ref, ref1, results, startAngle;
     startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
@@ -820,7 +878,6 @@ Engine = {
       length = p.get("interactor").get("length");
       return length === void 0 || length === null;
     });
-    console.log("no len", nolength);
     withlength = participants.filter(function(p) {
       var length;
       length = p.get("interactor").get("length");
@@ -845,14 +902,13 @@ Engine = {
           hasLength: true,
           radius: 150,
           startAngle: scale.val(previousLengths) + 5,
-          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5,
-          unknownStart: scale.val(previousLengths),
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 10,
+          unknownStart: scale.val(next.get("interactor").get("length") + previousLengths) - 10,
           unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
         }
       };
       return total.concat([v]);
     }), []);
-    console.log("views", views);
     return wind(views, function(d) {
       return d.model.get("id");
     });

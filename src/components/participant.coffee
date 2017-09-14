@@ -88,14 +88,13 @@ class Participant extends React.Component
       # participantCenter = Draw.center(@props.view)
       # console.log "C", participantCenter.x, participantCenter.y
       mid = (@props.view.endAngle + @props.view.startAngle) / 2
-      console.log "MID", mid
 
       text {
         className: "participantLabel",
         x: Draw.center(@props.view).x,
         y: Draw.center(@props.view).y,
         textAnchor: if mid <= 180 then "start" else "end"
-        }, "Testing"
+        }, @props.model.get("interactor").get("label")
       # text {
       #   className: "participantLabel",
       #   textAnchor: "middle",
