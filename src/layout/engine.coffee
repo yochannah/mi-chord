@@ -17,14 +17,14 @@ Engine =
       length = p.get("interactor").get("length")
       length isnt undefined and length isnt null
 
-    molRadius = 12
+    molRadius = 14
 
     # Get their total
     sum = _.reduce lengths, ((total, num) -> total + num), 0
 
     # Normalize the length in degrees
-    # scale = @scale([0, 360 - (nolength.length * molRadius)], [0, sum])
-    scale = @scale([0, 360], [0, sum])
+    scale = @scale([0, 360 - (nolength.length * molRadius)], [0, sum])
+    # scale = @scale([0, 360], [0, sum])
 
 
 
@@ -58,6 +58,41 @@ Engine =
 
 
       return total.concat [v]), []
+
+
+
+    nlviews = _.reduce nolength, ((total, next, memo) ->
+
+      previousParticipant = if memo is 0 then views[views.length - 1] else total[memo - 1]
+
+
+      # t =
+      #   startAngle: scale.val(previousLengths),
+      #   endAngle: scale.val(next.get("interactor").get("length") + previousLengths)
+      #
+
+
+
+      v =
+        model: next
+        view:
+          hasLength: false
+          radius: 150 + molRadius / 2
+          startAngle: previousParticipant.view.unknownEnd + 10
+          endAngle: previousParticipant.view.unknownEnd + 12
+          unknownStart: previousParticipant.view.unknownEnd + 10
+          unknownEnd: previousParticipant.view.unknownEnd + 12
+
+          # unknownStart: scale.val(previousLengths)
+          # unknownStart: scale.val(next.get("interactor").get("length") + previousLengths) - 10
+          # unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
+
+
+      return total.concat [v]), []
+
+    views = views.concat nlviews
+
+    console.log "VIEWS", views
 
     # console.log "views", views
 

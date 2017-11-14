@@ -73,9 +73,11 @@
     function loadChord(id) {
         // Actually code to load mi-circle
         $.get("https://www.ebi.ac.uk/intact/complex-ws/export/" + id, function (data) {
+            console.log("trying tagain");
+            document.getElementById("target").innertHTML = "";
             new MIModel(data).load().then(function (m) {
                 var circle = new Circle("#target", m);
-                window.m = m;
+                console.log("again");
                 buildDashboard(m);
                 console.log("circle", circle);
             });
@@ -83,7 +85,7 @@
     }
 
     // loadChord('EBI-9691559'); 9008420
-    loadChord('EBI-9691559');
+    loadChord('EBI-9008420');
 </script>
 
 </body>

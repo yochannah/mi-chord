@@ -252,81 +252,37 @@ Participant = (function(superClass) {
   };
 
   Participant.prototype.render = function() {
-    var Regions, cx, cy, mid, ref1, t;
+    var Regions;
     Regions = [];
-    this.props.model.get("features").map((function(_this) {
+    return this.props.model.get("features").map((function(_this) {
       return function(f) {
-        var ref1, scale;
+        var mid, ref1, scale;
         scale = Engine.scale([_this.props.view.startAngle, _this.props.view.endAngle], [0, _this.props.model.get("interactor").get("length")]);
-        return (ref1 = f.get("sequenceData")) != null ? ref1.map(function(s) {
-          return Regions.push(Region({
-            model: s,
-            key: s.cid,
-            view: {
-              radius: _this.props.view.radius + 1,
-              startAngle: scale.val(s.get("start")),
-              endAngle: scale.val(s.get("end"))
-            }
-          }));
-        }) : void 0;
+        if ((ref1 = f.get("sequenceData")) != null) {
+          ref1.map(function(s) {
+            console.log("PPP", _this.props.model, s.cid);
+            Regions.push(Region({
+              model: s,
+              key: s.cid,
+              view: {
+                radius: _this.props.view.radius + 1,
+                startAngle: scale.val(s.get("start")),
+                endAngle: scale.val(s.get("end"))
+              }
+            }));
+            return console.log("REGIONS", Regions);
+          });
+        }
+        mid = (_this.props.view.endAngle + _this.props.view.startAngle) / 2;
+        text({
+          className: "participantLabel",
+          x: Draw.center(_this.props.view).x,
+          y: Draw.center(_this.props.view).y,
+          textAnchor: mid <= 180 ? "start" : "end"
+        }, _this.props.model.get("interactor").get("label"));
+        return Regions;
       };
     })(this));
-    return g({
-      key: this.props.model.get("key")
-    }, this.props.view.hasLength === true ? g({}, path({
-      fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
-      onMouseEnter: (function(_this) {
-        return function() {
-          return _this.focusMe(true);
-        };
-      })(this),
-      onMouseLeave: (function(_this) {
-        return function() {
-          return _this.focusMe(false);
-        };
-      })(this),
-      className: "participant",
-      d: Draw.arc(this.props.view)
-    }), path({
-      fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
-      onMouseEnter: (function(_this) {
-        return function() {
-          return _this.focusMe(true);
-        };
-      })(this),
-      onMouseLeave: (function(_this) {
-        return function() {
-          return _this.focusMe(false);
-        };
-      })(this),
-      className: "participantUnknown",
-      d: Draw.arc2(this.props.view)
-    })) : ((ref1 = ptc(this.props.view.radius, this.props.view.endAngle), cx = ref1.x, cy = ref1.y, ref1), circle({
-      cx: cx,
-      cy: cy,
-      className: "nolenpart",
-      r: 10
-    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, text({
-      className: "participantLabel",
-      x: Draw.center(this.props.view).x,
-      y: Draw.center(this.props.view).y,
-      textAnchor: mid <= 180 ? "start" : "end"
-    }, this.props.model.get("interactor").get("label")), Regions, (function() {
-      var i, len, ref2, results;
-      if (this.props.view.hasLength) {
-        ref2 = Draw.ticks(this.props.view, 5);
-        results = [];
-        for (i = 0, len = ref2.length; i < len; i++) {
-          t = ref2[i];
-          results.push(path({
-            className: "tick",
-            d: t,
-            pointerEvents: "none"
-          }));
-        }
-        return results;
-      }
-    }).call(this));
   };
 
   return Participant;
@@ -504,6 +460,7 @@ SVG = (function(superClass) {
     })));
     Participants = _.values(views).map(function(p) {
       p.model.set("key", interactionId + ":" + p.model.get("id"));
+      p.key = interactionId + ":" + p.model.get("id");
       return Participant(p);
     });
     Unknowns = _.values(views).map(function(p) {
@@ -693,7 +650,8 @@ Main = (function() {
   function Main(target, model) {
     console.log("Using model", model);
     ReactDOM.render(SVG({
-      model: model
+      model: model,
+      key: new Date().getTime()
     }), document.getElementById("target"));
   }
 
@@ -868,7 +826,7 @@ wind = require('./utils').wind;
 
 Engine = {
   layout: function(participants) {
-    var lengths, molRadius, nolength, nolengthviews, questionMarkWidth, scale, sum, views, withlength;
+    var lengths, molRadius, nlviews, nolength, nolengthviews, questionMarkWidth, scale, sum, views, withlength;
     lengths = participants.map(function(p) {
       return p.get("interactor").get("length");
     });
@@ -883,11 +841,11 @@ Engine = {
       length = p.get("interactor").get("length");
       return length !== void 0 && length !== null;
     });
-    molRadius = 12;
+    molRadius = 14;
     sum = _.reduce(lengths, (function(total, num) {
       return total + num;
     }), 0);
-    scale = this.scale([0, 360], [0, sum]);
+    scale = this.scale([0, 360 - (nolength.length * molRadius)], [0, sum]);
     views = [];
     nolengthviews = [];
     questionMarkWidth = 3;
@@ -909,6 +867,24 @@ Engine = {
       };
       return total.concat([v]);
     }), []);
+    nlviews = _.reduce(nolength, (function(total, next, memo) {
+      var previousParticipant, v;
+      previousParticipant = memo === 0 ? views[views.length - 1] : total[memo - 1];
+      v = {
+        model: next,
+        view: {
+          hasLength: false,
+          radius: 150 + molRadius / 2,
+          startAngle: previousParticipant.view.unknownEnd + 10,
+          endAngle: previousParticipant.view.unknownEnd + 12,
+          unknownStart: previousParticipant.view.unknownEnd + 10,
+          unknownEnd: previousParticipant.view.unknownEnd + 12
+        }
+      };
+      return total.concat([v]);
+    }), []);
+    views = views.concat(nlviews);
+    console.log("VIEWS", views);
     return wind(views, function(d) {
       return d.model.get("id");
     });

@@ -66,6 +66,7 @@ class SVG extends React.Component
 
     Participants = _.values(views).map (p) ->
       p.model.set "key", interactionId + ":" + p.model.get("id")
+      p.key = interactionId + ":" + p.model.get("id")
       return Participant p
 
     Unknowns = _.values(views).map (p) ->

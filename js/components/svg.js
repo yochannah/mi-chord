@@ -133,6 +133,7 @@ SVG = (function(superClass) {
     })));
     Participants = _.values(views).map(function(p) {
       p.model.set("key", interactionId + ":" + p.model.get("id"));
+      p.key = interactionId + ":" + p.model.get("id");
       return Participant(p);
     });
     Unknowns = _.values(views).map(function(p) {
