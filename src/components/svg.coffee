@@ -50,21 +50,25 @@ class SVG extends React.Component
     links = interaction.get "links"
     views = Engine.layout participants
 
+
     defpaths = _.values(views).map (v) ->
       id = "tp" + v.model.get("id")
       return path {key: id, id: id, d: Draw.textDef v.view}
 
-    defpaths.push radialGradient {id: "rgrad", cx: "50%", cy: "50%", r: "75%"},
-      stop {offset: "0%", style: {stopColor: "rgb(255,255,255)", stopOpacity: 1}}
-      stop {offset: "50%", style: {stopColor: "rgb(255,255,255)", stopOpacity: 1}}
-      stop {offset: "62%", style: {stopColor: "rgb(0,0,0)", stopOpacity: 1}}
-      stop {offset: "100%", style: {stopColor: "rgb(0,0,0)", stopOpacity: 1}}
+    # defpaths.push radialGradient {id: "rgrad", cx: "50%", cy: "50%", r: "75%"},
+    #   stop {offset: "0%", style: {stopColor: "rgb(255,255,255)", stopOpacity: 1}}
+    #   stop {offset: "50%", style: {stopColor: "rgb(255,255,255)", stopOpacity: 1}}
+    #   stop {offset: "62%", style: {stopColor: "rgb(0,0,0)", stopOpacity: 1}}
+    #   stop {offset: "100%", style: {stopColor: "rgb(0,0,0)", stopOpacity: 1}}
 
 
-    defpaths.push mask {id: "fademask", maskContentUnits: "objectBoundingBox"},
-      rect {x: 0, y: 0, width: 1, height: 1, fill: "url(#rgrad)"}
+    # defpaths.push mask {id: "fademask", maskContentUnits: "objectBoundingBox"},
+    #   rect {x: 0, y: 0, width: 1, height: 1, fill: "url(#rgrad)"}
+
+
 
     Participants = _.values(views).map (p) ->
+      # console.log "part key", interactionId + ":" + p.model.get("id")
       p.model.set "key", interactionId + ":" + p.model.get("id")
       p.key = interactionId + ":" + p.model.get("id")
       return Participant p
@@ -73,17 +77,18 @@ class SVG extends React.Component
       if p.view.hasLength
         p.model.set "key", interactionId + ":" + p.model.get("id")
         return Unknown p
-
+    #
     Links = links.map (l, i) ->
-      l.set "key", interactionId + ":" + l.get("id")
-      return Link model: l, views: views
+      l.set "link key", interactionId + ":" + l.get("id")
+      return Link model: l, views: views, key: interactionId + ":" + l.get("id")
+
 
     svg {className: "mi-chord", ref: "svg", viewBox: "0 0 500 500"},
       defs {}, defpaths
       g {style: shapeRendering: "geometricPrecision"},
         # text {}, @props.model.get("interactions").at(0).get("id")
-        g {key: interactionId + ":links", className: "participants"}, Participants
         g {className: "links", style: transform: "translate(250px,250px)"}, Links
+        g {key: interactionId + ":links", className: "participants"}, Participants
         if @state.label? then Tooltip {rootsvg: @state.rootsvg, message: @state.label, mouse: @state.mouse}
       g {className: "unknowns"}, Unknowns
       # circle {cx: 250, cy: 250, r: 250, fill: "red", mask: "url(#fademask)"}

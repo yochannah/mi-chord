@@ -64,7 +64,6 @@ Engine = {
       return total.concat([v]);
     }), []);
     views = views.concat(nlviews);
-    console.log("VIEWS", views);
     return wind(views, function(d) {
       return d.model.get("id");
     });

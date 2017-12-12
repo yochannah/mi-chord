@@ -91,46 +91,6 @@ SVG = (function(superClass) {
         d: Draw.textDef(v.view)
       });
     });
-    defpaths.push(radialGradient({
-      id: "rgrad",
-      cx: "50%",
-      cy: "50%",
-      r: "75%"
-    }, stop({
-      offset: "0%",
-      style: {
-        stopColor: "rgb(255,255,255)",
-        stopOpacity: 1
-      }
-    }), stop({
-      offset: "50%",
-      style: {
-        stopColor: "rgb(255,255,255)",
-        stopOpacity: 1
-      }
-    }), stop({
-      offset: "62%",
-      style: {
-        stopColor: "rgb(0,0,0)",
-        stopOpacity: 1
-      }
-    }), stop({
-      offset: "100%",
-      style: {
-        stopColor: "rgb(0,0,0)",
-        stopOpacity: 1
-      }
-    })));
-    defpaths.push(mask({
-      id: "fademask",
-      maskContentUnits: "objectBoundingBox"
-    }, rect({
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-      fill: "url(#rgrad)"
-    })));
     Participants = _.values(views).map(function(p) {
       p.model.set("key", interactionId + ":" + p.model.get("id"));
       p.key = interactionId + ":" + p.model.get("id");
@@ -143,10 +103,11 @@ SVG = (function(superClass) {
       }
     });
     Links = links.map(function(l, i) {
-      l.set("key", interactionId + ":" + l.get("id"));
+      l.set("link key", interactionId + ":" + l.get("id"));
       return Link({
         model: l,
-        views: views
+        views: views,
+        key: interactionId + ":" + l.get("id")
       });
     });
     return svg({
@@ -158,14 +119,14 @@ SVG = (function(superClass) {
         shapeRendering: "geometricPrecision"
       }
     }, g({
-      key: interactionId + ":links",
-      className: "participants"
-    }, Participants), g({
       className: "links",
       style: {
         transform: "translate(250px,250px)"
       }
-    }, Links), this.state.label != null ? Tooltip({
+    }, Links), g({
+      key: interactionId + ":links",
+      className: "participants"
+    }, Participants), this.state.label != null ? Tooltip({
       rootsvg: this.state.rootsvg,
       message: this.state.label,
       mouse: this.state.mouse

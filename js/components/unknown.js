@@ -25,7 +25,7 @@ Unknown = (function(superClass) {
     }, text({
       className: "unknownLabel",
       textAnchor: "middle",
-      dy: "4"
+      dy: "6"
     }, "?")));
   };
 

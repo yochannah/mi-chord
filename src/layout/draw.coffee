@@ -4,7 +4,7 @@ ptc = polarToCartesian
 
 Draw =
 
-  arc: ({startAngle, endAngle, radius}, thickness = 20) ->
+  arc: ({startAngle, endAngle, radius}, thickness = 15) ->
 
     # console.log "trying to arc", startAngle, endAngle, radius
 
@@ -114,7 +114,7 @@ Draw =
       [path.join " "]
 
 
-    (buildLine angle for angle in [startAngle..endAngle] by 10)
+    (buildLine angle for angle in [startAngle..endAngle] by 8)
 
 
   textDef: ({startAngle, endAngle, radius}, thickness = 20) ->

@@ -63,6 +63,7 @@ Engine =
 
     nlviews = _.reduce nolength, ((total, next, memo) ->
 
+
       previousParticipant = if memo is 0 then views[views.length - 1] else total[memo - 1]
 
 
@@ -92,7 +93,6 @@ Engine =
 
     views = views.concat nlviews
 
-    console.log "VIEWS", views
 
     # console.log "views", views
 

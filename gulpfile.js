@@ -138,7 +138,7 @@ gulp.task('buildonce', function() { return compileOnce(); });
 
 gulp.task('watch', function() { return watch(); });
 
-gulp.task('deploy', ['coffee', 'less', 'buildonce']);
+gulp.task('deploy', ['coffee', 'less', 'buildonce', 'compress']);
 
 gulp.task('default', ['coffee', 'watch-coffee', 'watch', 'browser-sync']);
 

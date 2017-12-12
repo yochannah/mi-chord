@@ -43,6 +43,7 @@ class Participant extends React.Component
 
   render: ->
 
+
     Regions = []
 
     @props.model.get("features").map (f) =>
@@ -56,35 +57,34 @@ class Participant extends React.Component
 
         # Generate a Region component using the scaled data from the
         # current view
-        console.log "PPP", @props.model, s.cid
-        Regions.push Region
-          model: s
-          key: s.cid
-          view:
-            radius: @props.view.radius + 1
-            startAngle: scale.val s.get("start")
-            endAngle: scale.val s.get("end")
 
-        console.log "REGIONS", Regions
+        if s.get("start") != null && s.get("end") != null
 
-    # g {key: @props.model.get("key")},
-    #   if @props.view.hasLength is true
-    #     g {},
-    #       path
-    #         fill: if @props.model.get("focus") is true then "deepskyblue" else "#a8a8a8"
-    #         onMouseEnter: => @focusMe true
-    #         onMouseLeave: => @focusMe false
-    #         className: "participant",
-    #         d: Draw.arc @props.view,
-    #       path
-    #         fill: if @props.model.get("focus") is true then "deepskyblue" else "#a8a8a8"
-    #         onMouseEnter: => @focusMe true
-    #         onMouseLeave: => @focusMe false
-    #         className: "participantUnknown",
-    #         d: Draw.arc2 @props.view
-      # else
-      #   {x: cx, y: cy} = ptc @props.view.radius, @props.view.endAngle
-      #   circle {cx: cx, cy: cy, className: "nolenpart", r: 10 }
+          Regions.push Region
+            model: s
+            key: s.cid
+            view:
+              radius: @props.view.radius
+              startAngle: scale.val s.get("start")
+              endAngle: scale.val s.get("end")
+
+
+    g {key: @props.model.get("key")},
+      if @props.view.hasLength is true
+        g {},
+          path
+            onMouseEnter: => @focusMe true
+            onMouseLeave: => @focusMe false
+            className: "participant" + if @props.model.get("focus") is true then " focused" else ""
+            d: Draw.arc @props.view,
+          path
+            onMouseEnter: => @focusMe true
+            onMouseLeave: => @focusMe false
+            className: "participantUnknown" + if @props.model.get("focus") is true then " focused" else ""
+            d: Draw.arc2 @props.view
+      else
+        {x: cx, y: cy} = ptc @props.view.radius, @props.view.endAngle
+        circle {cx: cx, cy: cy, className: "nolenpart", r: 10 }
       # {x: x1, y: y1} = (ptc @props.view.radius, @props.view.endAngle)
       # console.log "xy", x, y
 
@@ -98,6 +98,9 @@ class Participant extends React.Component
         y: Draw.center(@props.view).y,
         textAnchor: if mid <= 180 then "start" else "end"
         }, @props.model.get("interactor").get("label")
+
+
+
       # text {
       #   className: "participantLabel",
       #   textAnchor: "middle",
@@ -107,9 +110,10 @@ class Participant extends React.Component
       #     startOffset: "50%"
       #   }, @props.model.get("interactor").get("label")
       Regions
-      # if @props.view.hasLength
-      #   for t in Draw.ticks @props.view, 5
-      #     path {className: "tick", d: t, pointerEvents: "none"}
+
+      if @props.view.hasLength
+        for t in Draw.ticks @props.view, 10
+          path {className: "tick", d: t, pointerEvents: "none"}
 
 
 module.exports = Participant

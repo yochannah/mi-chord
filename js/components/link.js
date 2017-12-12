@@ -118,34 +118,40 @@ Link = (function(superClass) {
   };
 
   Link.prototype.render = function() {
-    var cn, isEmpty, parsed, views;
+    var cn, error, isEmpty, parsed, views;
     views = [];
-    this.props.model.get("features").map((function(_this) {
-      return function(feature) {
-        var ParticipantModel, participantView, ref1, scale, sequenceData;
-        ref1 = _this.props.views[feature.get("participant").get("id")], participantView = ref1.view, ParticipantModel = ref1.model;
-        scale = Engine.scale([participantView.startAngle, participantView.endAngle], [0, ParticipantModel.get("interactor").get("length")]);
-        return sequenceData = feature.get("sequenceData").map(function(s) {
-          var end, halfway, start;
-          start = s.get("start");
-          end = s.get("start");
-          if (start === null && end === null) {
-            halfway = (participantView.unknownStart + participantView.unknownEnd) / 2;
-            return views.push({
-              radius: participantView.radius,
-              startAngle: participantView.unknownStart + 2.5,
-              endAngle: participantView.unknownStart + 2.5
-            });
-          } else {
-            return views.push({
-              radius: participantView.radius,
-              startAngle: scale.val(s.get("start")),
-              endAngle: scale.val(s.get("end"))
-            });
-          }
-        });
-      };
-    })(this));
+    try {
+      this.props.model.get("features").map((function(_this) {
+        return function(feature) {
+          var ParticipantModel, participantView, ref1, scale, sequenceData;
+          ref1 = _this.props.views[feature.get("participant").get("id")], participantView = ref1.view, ParticipantModel = ref1.model;
+          scale = Engine.scale([participantView.startAngle, participantView.endAngle], [0, ParticipantModel.get("interactor").get("length")]);
+          return sequenceData = feature.get("sequenceData").map(function(s) {
+            var end, halfway, start;
+            start = s.get("start");
+            end = s.get("start");
+            if (start === null && end === null) {
+              halfway = (participantView.unknownStart + participantView.unknownEnd) / 2;
+              return views.push({
+                radius: participantView.radius,
+                startAngle: participantView.unknownStart + 2.5,
+                endAngle: participantView.unknownStart + 2.5
+              });
+            } else {
+              return views.push({
+                radius: participantView.radius,
+                startAngle: scale.val(s.get("start")),
+                endAngle: scale.val(s.get("end"))
+              });
+            }
+          });
+        };
+      })(this));
+    } catch (error1) {
+      error = error1;
+    } finally {
+
+    }
     parsed = null;
     isEmpty = this.allUnknown(views);
     return g({
@@ -162,18 +168,13 @@ Link = (function(superClass) {
         };
       })(this)
     }, views.length === 1 ? path({
-      className: "link emptyLink selfLink",
+      className: "emptyLink selfLink",
       opacity: "0.9",
       fill: "none",
-      d: Draw.selfBinding(views[0])
-    }) : (cn = "link", isEmpty ? cn += " emptyLink" : void 0, path({
+      d: Draw.selfBinding(views[0], 15)
+    }) : (cn = "link", isEmpty ? cn = "emptyLink" : void 0, path({
       className: cn,
-      opacity: "0.9",
-      fill: this.props.model.get("fill"),
-      d: Draw.link(views),
-      style: {
-        opacity: 0.8
-      }
+      d: Draw.link(views)
     })));
   };
 

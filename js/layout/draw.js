@@ -11,7 +11,7 @@ Draw = {
     var endAngle, innerEndX, innerEndY, innerStartX, innerStartY, largeArc, outerEndX, outerEndY, outerStartX, outerStartY, path, radius, ref, ref1, ref2, ref3, startAngle;
     startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
     if (thickness == null) {
-      thickness = 20;
+      thickness = 15;
     }
     ref = ptc(radius, startAngle), innerStartX = ref.x, innerStartY = ref.y;
     ref1 = ptc(radius, endAngle), innerEndX = ref1.x, innerEndY = ref1.y;
@@ -112,7 +112,7 @@ Draw = {
       return [path.join(" ")];
     };
     results = [];
-    for (angle = j = ref = startAngle, ref1 = endAngle; j <= ref1; angle = j += 10) {
+    for (angle = j = ref = startAngle, ref1 = endAngle; j <= ref1; angle = j += 8) {
       results.push(buildLine(angle));
     }
     return results;
