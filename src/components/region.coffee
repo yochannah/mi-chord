@@ -10,8 +10,13 @@ class Region extends React.Component
     super props
 
   render: ->
-    # console.log "INSIDE REGION ARC", @props.view
-    if not isNaN(@props.view.endAngle)
-      path {className: "region", d: Draw.arc @props.view, 7}
+    try
+      if not isNaN(@props.view.endAngle)
+        path {className: "region", d: Draw.arc @props.view, 15}
+    catch error
+      console.log "Error rendering region", error
+    finally
+      null
+
 
 module.exports = Region

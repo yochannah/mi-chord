@@ -5,8 +5,8 @@ body {
 }
 .mi-chord {
   background-color: white;
-  width: 500px;
-  height: 500px;
+  width: 800px;
+  height: 800px;
 }
 .participants {
   transform: translate(250px, 250px);
@@ -14,27 +14,28 @@ body {
 .participant {
   transition: all 150ms ease-in;
   stroke: #3e3e3e;
-  stroke-width: 1;
-  opacity: 0.9;
+  stroke-width: 0.6;
+  fill: white;
+}
+.focused {
+  fill: deepskyblue;
 }
 .participantUnknown {
   transition: all 150ms ease-in;
   stroke: #3e3e3e;
-  stroke-width: 1;
-  opacity: 0.5;
+  stroke-width: 0.6;
+  fill: white;
 }
 .participantLabel {
-  font-size: 0.8em;
+  font-size: 0.6em;
 }
 .region {
-  fill: white;
-  opacity: 0.3;
+  fill: #8c6eaa;
 }
 .tick {
   stroke: black;
-  stroke-width: 1;
+  stroke-width: 0.6;
   pointer-events: none;
-  opacity: 0.4;
 }
 .tooltip {
   pointer-events: none;
@@ -47,9 +48,16 @@ body {
 }
 .link {
   transition: all 150ms ease-in;
-  stroke: #bebebe;
-  stroke-width: 1;
-  opacity: 0.5;
+  opacity: 0.6;
+  fill: #e08214;
+  stroke: #a08214;
+  stroke-width: 0.6;
+}
+.emptyLink {
+  stroke: #3c3c3c;
+  opacity: 1;
+  stroke: #a08214;
+  stroke-width: 0.6;
 }
 .label {
   z-index: 9999;
@@ -76,14 +84,15 @@ body {
   stroke-width: 1;
 }
 .unknownLabel {
-  font-size: 0.7em;
+  font-size: 0.6em;
   fill: black;
+  text-anchor: middle;
+  alignment-baseline: middle;
 }
 .nolenpart {
   fill: white;
-  stroke: #3e3e3e;
-  stroke-width: 1;
-  opacity: 0.8;
+  stroke: black;
+  stroke-width: 0.6;
 }
 #dashboard {
   list-style-type: none;

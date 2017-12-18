@@ -1,3 +1,5 @@
+@stroke-width: 0.6;
+
 body {
   background: #d9dbdd;
   background: white;
@@ -6,8 +8,8 @@ body {
 
 .mi-chord {
   background-color: white;
-  width: 500px;
-  height: 500px;
+  width: 800px;
+  height: 800px;
 }
 
 .participants {
@@ -18,32 +20,36 @@ body {
   // fill: #cacaca;
   transition: all 150ms ease-in;
   stroke: #3e3e3e;
-  stroke-width: 1;
-  opacity: 0.9;
+  stroke-width: @stroke-width;
+  fill: white;
+}
+
+.focused {
+  fill: deepskyblue;
 }
 
 .participantUnknown {
   // fill: #cacaca;
   transition: all 150ms ease-in;
   stroke: #3e3e3e;
-  stroke-width: 1;
-  opacity: 0.5;
+  stroke-width: @stroke-width;
+  fill: white;
 }
 
 .participantLabel {
-  font-size: 0.8em;
+  font-size: 0.6em;
 }
 
 .region {
-  fill: white;
-  opacity: 0.3;
+  fill: #8c6eaa;
 }
+
+
 
 .tick {
   stroke: black;
-  stroke-width: 1;
+  stroke-width: @stroke-width;
   pointer-events: none;
-  opacity: 0.4;
 }
 
 .tooltip {
@@ -67,9 +73,27 @@ body {
   // fill: deepskyblue;
   // fill: none;
   transition: all 150ms ease-in;
-  stroke: #bebebe;
-  stroke-width: 1;
-  opacity: 0.5;
+  // stroke: #3c3c3c;
+  // stroke-width: 1;
+  opacity: 0.6;
+  fill: rgb(224, 130, 20);
+  stroke: rgb(160, 130, 20);
+  stroke-width: @stroke-width;
+
+
+
+}
+
+.emptyLink {
+  stroke: #3c3c3c;
+  stroke-width: @stroke-width;
+  opacity: 1;
+  stroke: rgb(160, 130, 20);
+  stroke-width: @stroke-width;
+}
+
+.selfLink {
+
 }
 
 .label {
@@ -111,15 +135,16 @@ body {
 }
 
 .unknownLabel {
-  font-size: 0.7em;
+  font-size: 0.6em;
   fill: black;
+  text-anchor: middle;
+  alignment-baseline: middle;
 }
 
 .nolenpart {
   fill: white;
-  stroke: #3e3e3e;
-  stroke-width: 1;
-  opacity: 0.8;
+  stroke: black;
+  stroke-width: @stroke-width;
 }
 
 

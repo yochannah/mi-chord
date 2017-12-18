@@ -6,6 +6,6 @@ class Main
 
   constructor: (target, model) ->
     console.log "Using model", model
-    ReactDOM.render SVG({model: model}), document.getElementById "target"
+    ReactDOM.render SVG({model: model, key: new Date().getTime()}), document.getElementById "target"
 
 module.exports = Main

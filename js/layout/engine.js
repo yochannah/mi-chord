@@ -6,7 +6,7 @@ wind = require('./utils').wind;
 
 Engine = {
   layout: function(participants) {
-    var lengths, molRadius, nolength, nolengthviews, questionMarkWidth, scale, sum, views, withlength;
+    var lengths, molRadius, nlviews, nolength, nolengthviews, questionMarkWidth, scale, sum, views, withlength;
     lengths = participants.map(function(p) {
       return p.get("interactor").get("length");
     });
@@ -21,7 +21,7 @@ Engine = {
       length = p.get("interactor").get("length");
       return length !== void 0 && length !== null;
     });
-    molRadius = 12;
+    molRadius = 14;
     sum = _.reduce(lengths, (function(total, num) {
       return total + num;
     }), 0);
@@ -29,48 +29,41 @@ Engine = {
     views = [];
     nolengthviews = [];
     questionMarkWidth = 3;
-    withlength.map(function(p, i) {
-      var previous;
-      previous = _.last(views);
-      if (previous) {
-        return views.push({
-          model: p,
-          view: {
-            hasLength: true,
-            radius: 200,
-            unknownStart: previous.view.endAngle + 3,
-            unknownEnd: previous.view.endAngle + 8,
-            startAngle: previous.view.endAngle + 8,
-            endAngle: (i = withlength.length - 1) ? (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3 : (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3
-          }
-        });
-      } else {
-        return views.push({
-          model: p,
-          view: {
-            unknownStart: 0,
-            unknownEnd: 5,
-            hasLength: true,
-            radius: 200,
-            startAngle: 5,
-            endAngle: scale.val(p.get("interactor").get("length"))
-          }
-        });
-      }
-    });
-    nolength.map(function(p, i) {
-      var previous;
-      previous = _.last(views);
-      return views.push({
-        model: p,
+    views = _.reduce(withlength, (function(total, next, memo) {
+      var previousLengths, v;
+      previousLengths = _.reduce(total, (function(count, p) {
+        return count + p.model.get("interactor").get("length");
+      }), 0);
+      v = {
+        model: next,
+        view: {
+          hasLength: true,
+          radius: 150,
+          startAngle: scale.val(previousLengths) + 5,
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 10,
+          unknownStart: scale.val(next.get("interactor").get("length") + previousLengths) - 10,
+          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
+        }
+      };
+      return total.concat([v]);
+    }), []);
+    nlviews = _.reduce(nolength, (function(total, next, memo) {
+      var previousParticipant, v;
+      previousParticipant = memo === 0 ? views[views.length - 1] : total[memo - 1];
+      v = {
+        model: next,
         view: {
           hasLength: false,
-          radius: 210,
-          startAngle: previous.view.endAngle + molRadius,
-          endAngle: previous.view.endAngle + molRadius
+          radius: 150 + molRadius / 2,
+          startAngle: previousParticipant.view.unknownEnd + 10,
+          endAngle: previousParticipant.view.unknownEnd + 12,
+          unknownStart: previousParticipant.view.unknownEnd + 10,
+          unknownEnd: previousParticipant.view.unknownEnd + 12
         }
-      });
-    });
+      };
+      return total.concat([v]);
+    }), []);
+    views = views.concat(nlviews);
     return wind(views, function(d) {
       return d.model.get("id");
     });

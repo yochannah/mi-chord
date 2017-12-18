@@ -16,11 +16,19 @@ Region = (function(superClass) {
   }
 
   Region.prototype.render = function() {
-    if (!isNaN(this.props.view.endAngle)) {
-      return path({
-        className: "region",
-        d: Draw.arc(this.props.view, 7)
-      });
+    var error;
+    try {
+      if (!isNaN(this.props.view.endAngle)) {
+        return path({
+          className: "region",
+          d: Draw.arc(this.props.view, 15)
+        });
+      }
+    } catch (error1) {
+      error = error1;
+      return console.log("Error rendering region", error);
+    } finally {
+      null;
     }
   };
 

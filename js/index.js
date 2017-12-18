@@ -10,7 +10,8 @@ Main = (function() {
   function Main(target, model) {
     console.log("Using model", model);
     ReactDOM.render(SVG({
-      model: model
+      model: model,
+      key: new Date().getTime()
     }), document.getElementById("target"));
   }
 
