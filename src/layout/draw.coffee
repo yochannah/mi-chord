@@ -33,11 +33,14 @@ Draw =
   center: ({startAngle, endAngle, radius}, thickness = 20) ->
     {x, y} = ptc radius + 30, (startAngle + endAngle) / 2
 
+  radial: (angle, radius, thickness = 20) ->
+    {x, y} = ptc radius + thickness, angle
+
   centerUnknown: ({unknownStart, unknownEnd, radius}, thickness = 20) ->
     {x, y} = ptc radius + 10, (unknownStart + unknownEnd) / 2
 
   startUnknown: ({unknownStart, unknownEnd, radius}, thickness = 20) ->
-    {x, y} = ptc radius + 10, unknownStart + 2.5
+    {x, y} = ptc radius + 8, unknownStart + 2.5
 
   selfBinding: ({startAngle, endAngle, radius}, thickness = 20) ->
 
@@ -114,7 +117,17 @@ Draw =
       [path.join " "]
 
 
-    (buildLine angle for angle in [startAngle..endAngle] by 8)
+    (buildLine angle for angle in [startAngle..endAngle] by 3)
+
+  line: (angle, radius, length = 20) ->
+
+    {x: startX, y: startY} = ptc radius + 15, angle
+    {x: endX, y: endY} = ptc radius + 20, angle
+    path = [
+      "M", startX, startY
+      "L", endX, endY
+    ]
+    [path.join " "]
 
 
   textDef: ({startAngle, endAngle, radius}, thickness = 20) ->
@@ -139,9 +152,9 @@ Draw =
   link: (participants) ->
 
     pinch = (start, end) ->
-      (end - start) * 0.4
+      (end - start) * 0.2
 
-    depth = 90
+    depth = 30
 
     parts = []
 

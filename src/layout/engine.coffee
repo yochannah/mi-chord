@@ -49,12 +49,25 @@ Engine =
         view:
           hasLength: true
           radius: 150
-          startAngle: scale.val(previousLengths) + 5
-          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 10
 
-          # unknownStart: scale.val(previousLengths)
-          unknownStart: scale.val(next.get("interactor").get("length") + previousLengths) - 10
-          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
+          unknownStart: scale.val(previousLengths) + 0
+          unknownEnd: scale.val(previousLengths) + 5
+
+          startAngle: scale.val(previousLengths) + 5
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5
+
+
+
+
+
+
+
+          # startAngle: scale.val(previousLengths) + 5
+          # endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 10
+          #
+          # # unknownStart: scale.val(previousLengths)
+          # unknownStart: scale.val(next.get("interactor").get("length") + previousLengths) - 10
+          # unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
 
 
       return total.concat [v]), []

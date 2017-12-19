@@ -77,11 +77,11 @@ class Participant extends React.Component
             onMouseLeave: => @focusMe false
             className: "participant" + if @props.model.get("focus") is true then " focused" else ""
             d: Draw.arc @props.view,
-          path
-            onMouseEnter: => @focusMe true
-            onMouseLeave: => @focusMe false
-            className: "participantUnknown" + if @props.model.get("focus") is true then " focused" else ""
-            d: Draw.arc2 @props.view
+          # path
+          #   onMouseEnter: => @focusMe true
+          #   onMouseLeave: => @focusMe false
+          #   className: "participantUnknown" + if @props.model.get("focus") is true then " focused" else ""
+          #   d: Draw.arc2 @props.view
       else
         {x: cx, y: cy} = ptc @props.view.radius, @props.view.endAngle
         circle {cx: cx, cy: cy, className: "nolenpart", r: 10 }
@@ -99,6 +99,27 @@ class Participant extends React.Component
         textAnchor: if mid <= 180 then "start" else "end"
         }, @props.model.get("interactor").get("label")
 
+      text {
+        className: "length",
+        x: Draw.radial(@props.view.startAngle, 156).x,
+        y: Draw.radial(@props.view.startAngle, 156).y,
+        textAnchor: "middle",
+        alignmentBaseline: "middle"
+        }, 1
+
+      text {
+        className: "length",
+        x: Draw.radial(@props.view.endAngle, 156).x,
+        y: Draw.radial(@props.view.endAngle, 156).y,
+        textAnchor: "middle",
+        alignmentBaseline: "middle"
+        }, @props.model.get("interactor").get("length")
+
+
+
+      path {className: "tick", d: Draw.line(@props.view.startAngle, 150, 20), pointerEvents: "none"}
+      path {className: "tick", d: Draw.line(@props.view.endAngle, 150, 20), pointerEvents: "none"}
+
 
 
       # text {
@@ -112,8 +133,10 @@ class Participant extends React.Component
       Regions
 
       if @props.view.hasLength
-        for t in Draw.ticks @props.view, 10
+        for t in Draw.ticks @props.view, 5
           path {className: "tick", d: t, pointerEvents: "none"}
+
+
 
 
 module.exports = Participant

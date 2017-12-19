@@ -23,9 +23,7 @@ Unknown = (function(superClass) {
     }, g({
       transform: "translate(" + x + ", " + y + ")"
     }, text({
-      className: "unknownLabel",
-      textAnchor: "middle",
-      dy: "6"
+      className: "unknownLabel"
     }, "?")));
   };
 

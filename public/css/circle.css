@@ -27,10 +27,14 @@ body {
   fill: white;
 }
 .participantLabel {
-  font-size: 0.6em;
+  font-size: 9px;
 }
 .region {
   fill: #8c6eaa;
+}
+.length {
+  font-size: 7px;
+  fill: #434343;
 }
 .tick {
   stroke: black;

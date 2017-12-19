@@ -289,19 +289,6 @@ Participant = (function(superClass) {
       })(this),
       className: "participant" + (this.props.model.get("focus") === true ? " focused" : ""),
       d: Draw.arc(this.props.view)
-    }), path({
-      onMouseEnter: (function(_this) {
-        return function() {
-          return _this.focusMe(true);
-        };
-      })(this),
-      onMouseLeave: (function(_this) {
-        return function() {
-          return _this.focusMe(false);
-        };
-      })(this),
-      className: "participantUnknown" + (this.props.model.get("focus") === true ? " focused" : ""),
-      d: Draw.arc2(this.props.view)
     })) : ((ref1 = ptc(this.props.view.radius, this.props.view.endAngle), cx = ref1.x, cy = ref1.y, ref1), circle({
       cx: cx,
       cy: cy,
@@ -312,10 +299,30 @@ Participant = (function(superClass) {
       x: Draw.center(this.props.view).x,
       y: Draw.center(this.props.view).y,
       textAnchor: mid <= 180 ? "start" : "end"
-    }, this.props.model.get("interactor").get("label")), Regions, (function() {
+    }, this.props.model.get("interactor").get("label")), text({
+      className: "length",
+      x: Draw.radial(this.props.view.startAngle, 156).x,
+      y: Draw.radial(this.props.view.startAngle, 156).y,
+      textAnchor: "middle",
+      alignmentBaseline: "middle"
+    }, 1), text({
+      className: "length",
+      x: Draw.radial(this.props.view.endAngle, 156).x,
+      y: Draw.radial(this.props.view.endAngle, 156).y,
+      textAnchor: "middle",
+      alignmentBaseline: "middle"
+    }, this.props.model.get("interactor").get("length")), path({
+      className: "tick",
+      d: Draw.line(this.props.view.startAngle, 150, 20),
+      pointerEvents: "none"
+    }), path({
+      className: "tick",
+      d: Draw.line(this.props.view.endAngle, 150, 20),
+      pointerEvents: "none"
+    }), Regions, (function() {
       var i, len, ref2, results;
       if (this.props.view.hasLength) {
-        ref2 = Draw.ticks(this.props.view, 10);
+        ref2 = Draw.ticks(this.props.view, 5);
         results = [];
         for (i = 0, len = ref2.length; i < len; i++) {
           t = ref2[i];
@@ -639,9 +646,7 @@ Unknown = (function(superClass) {
     }, g({
       transform: "translate(" + x + ", " + y + ")"
     }, text({
-      className: "unknownLabel",
-      textAnchor: "middle",
-      dy: "6"
+      className: "unknownLabel"
     }, "?")));
   };
 
@@ -716,6 +721,13 @@ Draw = {
     }
     return ref = ptc(radius + 30, (startAngle + endAngle) / 2), x = ref.x, y = ref.y, ref;
   },
+  radial: function(angle, radius, thickness) {
+    var ref, x, y;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    return ref = ptc(radius + thickness, angle), x = ref.x, y = ref.y, ref;
+  },
   centerUnknown: function(arg, thickness) {
     var radius, ref, unknownEnd, unknownStart, x, y;
     unknownStart = arg.unknownStart, unknownEnd = arg.unknownEnd, radius = arg.radius;
@@ -730,7 +742,7 @@ Draw = {
     if (thickness == null) {
       thickness = 20;
     }
-    return ref = ptc(radius + 10, unknownStart + 2.5), x = ref.x, y = ref.y, ref;
+    return ref = ptc(radius + 8, unknownStart + 2.5), x = ref.x, y = ref.y, ref;
   },
   selfBinding: function(arg, thickness) {
     var endAngle, ex, ey, path, q1, q2, q3, q4, q5, q6, radius, ref, ref1, ref2, ref3, ref4, ref5, ref6, startAngle, x, x1, x2, y, y1, y2;
@@ -790,10 +802,20 @@ Draw = {
       return [path.join(" ")];
     };
     results = [];
-    for (angle = j = ref = startAngle, ref1 = endAngle; j <= ref1; angle = j += 8) {
+    for (angle = j = ref = startAngle, ref1 = endAngle; j <= ref1; angle = j += 3) {
       results.push(buildLine(angle));
     }
     return results;
+  },
+  line: function(angle, radius, length) {
+    var endX, endY, path, ref, ref1, startX, startY;
+    if (length == null) {
+      length = 20;
+    }
+    ref = ptc(radius + 15, angle), startX = ref.x, startY = ref.y;
+    ref1 = ptc(radius + 20, angle), endX = ref1.x, endY = ref1.y;
+    path = ["M", startX, startY, "L", endX, endY];
+    return [path.join(" ")];
   },
   textDef: function(arg, thickness) {
     var endAngle, innerEndX, innerEndY, innerStartX, innerStartY, largeArc, path, radius, ref, ref1, startAngle;
@@ -811,9 +833,9 @@ Draw = {
   link: function(participants) {
     var depth, parts, pinch;
     pinch = function(start, end) {
-      return (end - start) * 0.4;
+      return (end - start) * 0.2;
     };
-    depth = 90;
+    depth = 30;
     parts = [];
     participants = _.sortBy(participants, "startAngle");
     participants.map((function(_this) {
@@ -873,10 +895,10 @@ Engine = {
         view: {
           hasLength: true,
           radius: 150,
+          unknownStart: scale.val(previousLengths) + 0,
+          unknownEnd: scale.val(previousLengths) + 5,
           startAngle: scale.val(previousLengths) + 5,
-          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 10,
-          unknownStart: scale.val(next.get("interactor").get("length") + previousLengths) - 10,
-          unknownEnd: scale.val(next.get("interactor").get("length") + previousLengths) - 5
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5
         }
       };
       return total.concat([v]);

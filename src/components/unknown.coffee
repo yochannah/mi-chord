@@ -15,6 +15,6 @@ class Unknown extends React.Component
     g {transform: "translate(250, 250)"},
       # circle {className: "unknown", r: 7, cx: x, cy: y}
       g {transform: "translate(#{x}, #{y})"},
-        text {className: "unknownLabel", textAnchor: "middle", dy: "6"}, "?"
+        text {className: "unknownLabel"}, "?"
 
 module.exports = Unknown

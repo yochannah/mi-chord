@@ -90,19 +90,6 @@ Participant = (function(superClass) {
       })(this),
       className: "participant" + (this.props.model.get("focus") === true ? " focused" : ""),
       d: Draw.arc(this.props.view)
-    }), path({
-      onMouseEnter: (function(_this) {
-        return function() {
-          return _this.focusMe(true);
-        };
-      })(this),
-      onMouseLeave: (function(_this) {
-        return function() {
-          return _this.focusMe(false);
-        };
-      })(this),
-      className: "participantUnknown" + (this.props.model.get("focus") === true ? " focused" : ""),
-      d: Draw.arc2(this.props.view)
     })) : ((ref1 = ptc(this.props.view.radius, this.props.view.endAngle), cx = ref1.x, cy = ref1.y, ref1), circle({
       cx: cx,
       cy: cy,
@@ -113,10 +100,30 @@ Participant = (function(superClass) {
       x: Draw.center(this.props.view).x,
       y: Draw.center(this.props.view).y,
       textAnchor: mid <= 180 ? "start" : "end"
-    }, this.props.model.get("interactor").get("label")), Regions, (function() {
+    }, this.props.model.get("interactor").get("label")), text({
+      className: "length",
+      x: Draw.radial(this.props.view.startAngle, 156).x,
+      y: Draw.radial(this.props.view.startAngle, 156).y,
+      textAnchor: "middle",
+      alignmentBaseline: "middle"
+    }, 1), text({
+      className: "length",
+      x: Draw.radial(this.props.view.endAngle, 156).x,
+      y: Draw.radial(this.props.view.endAngle, 156).y,
+      textAnchor: "middle",
+      alignmentBaseline: "middle"
+    }, this.props.model.get("interactor").get("length")), path({
+      className: "tick",
+      d: Draw.line(this.props.view.startAngle, 150, 20),
+      pointerEvents: "none"
+    }), path({
+      className: "tick",
+      d: Draw.line(this.props.view.endAngle, 150, 20),
+      pointerEvents: "none"
+    }), Regions, (function() {
       var i, len, ref2, results;
       if (this.props.view.hasLength) {
-        ref2 = Draw.ticks(this.props.view, 10);
+        ref2 = Draw.ticks(this.props.view, 5);
         results = [];
         for (i = 0, len = ref2.length; i < len; i++) {
           t = ref2[i];
