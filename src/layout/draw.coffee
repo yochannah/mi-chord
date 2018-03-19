@@ -152,7 +152,7 @@ Draw =
   link: (participants) ->
 
     pinch = (start, end) ->
-      (end - start) * 0.2
+      (end - start) * 0
 
     depth = 30
 
