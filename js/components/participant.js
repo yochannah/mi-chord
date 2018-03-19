@@ -54,29 +54,30 @@ Participant = (function(superClass) {
   };
 
   Participant.prototype.render = function() {
-    var Regions, cx, cy, ref1, t;
+    var Regions, cx, cy, mid, ref1, t;
     Regions = [];
     this.props.model.get("features").map((function(_this) {
       return function(f) {
         var ref1, scale;
         scale = Engine.scale([_this.props.view.startAngle, _this.props.view.endAngle], [0, _this.props.model.get("interactor").get("length")]);
         return (ref1 = f.get("sequenceData")) != null ? ref1.map(function(s) {
-          return Regions.push(Region({
-            model: s,
-            key: s.cid,
-            view: {
-              radius: _this.props.view.radius + 1,
-              startAngle: scale.val(s.get("start")),
-              endAngle: scale.val(s.get("end"))
-            }
-          }));
+          if (s.get("start") !== null && s.get("end") !== null) {
+            return Regions.push(Region({
+              model: s,
+              key: s.cid,
+              view: {
+                radius: _this.props.view.radius,
+                startAngle: scale.val(s.get("start")),
+                endAngle: scale.val(s.get("end"))
+              }
+            }));
+          }
         }) : void 0;
       };
     })(this));
     return g({
       key: this.props.model.get("key")
     }, this.props.view.hasLength === true ? g({}, path({
-      fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
       onMouseEnter: (function(_this) {
         return function() {
           return _this.focusMe(true);
@@ -87,35 +88,39 @@ Participant = (function(superClass) {
           return _this.focusMe(false);
         };
       })(this),
-      className: "participant",
+      className: "participant" + (this.props.model.get("focus") === true ? " focused" : ""),
       d: Draw.arc(this.props.view)
-    }), path({
-      fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
-      onMouseEnter: (function(_this) {
-        return function() {
-          return _this.focusMe(true);
-        };
-      })(this),
-      onMouseLeave: (function(_this) {
-        return function() {
-          return _this.focusMe(false);
-        };
-      })(this),
-      className: "participantUnknown",
-      d: Draw.arc2(this.props.view)
     })) : ((ref1 = ptc(this.props.view.radius, this.props.view.endAngle), cx = ref1.x, cy = ref1.y, ref1), circle({
       cx: cx,
       cy: cy,
       className: "nolenpart",
       r: 10
-    })), text({
+    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, text({
       className: "participantLabel",
+      x: Draw.center(this.props.view).x,
+      y: Draw.center(this.props.view).y,
+      textAnchor: mid <= 180 ? "start" : "end"
+    }, this.props.model.get("interactor").get("label")), text({
+      className: "length",
+      x: Draw.radial(this.props.view.startAngle, 156).x,
+      y: Draw.radial(this.props.view.startAngle, 156).y,
       textAnchor: "middle",
       alignmentBaseline: "middle"
-    }, React.createElement("textPath", {
-      xlinkHref: "#tp" + this.props.model.get("id"),
-      startOffset: "50%"
-    }, this.props.model.get("interactor").get("label"))), Regions, (function() {
+    }, 1), text({
+      className: "length",
+      x: Draw.radial(this.props.view.endAngle, 156).x,
+      y: Draw.radial(this.props.view.endAngle, 156).y,
+      textAnchor: "middle",
+      alignmentBaseline: "middle"
+    }, this.props.model.get("interactor").get("length")), path({
+      className: "tick",
+      d: Draw.line(this.props.view.startAngle, 150, 20),
+      pointerEvents: "none"
+    }), path({
+      className: "tick",
+      d: Draw.line(this.props.view.endAngle, 150, 20),
+      pointerEvents: "none"
+    }), Regions, (function() {
       var i, len, ref2, results;
       if (this.props.view.hasLength) {
         ref2 = Draw.ticks(this.props.view, 5);

@@ -17,15 +17,13 @@ Unknown = (function(superClass) {
 
   Unknown.prototype.render = function() {
     var ref1, x, y;
-    ref1 = Draw.centerUnknown(this.props.view), x = ref1.x, y = ref1.y;
+    ref1 = Draw.startUnknown(this.props.view), x = ref1.x, y = ref1.y;
     return g({
       transform: "translate(250, 250)"
     }, g({
       transform: "translate(" + x + ", " + y + ")"
     }, text({
-      className: "unknownLabel",
-      textAnchor: "middle",
-      dy: "4"
+      className: "unknownLabel"
     }, "?")));
   };
 

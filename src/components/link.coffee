@@ -65,40 +65,55 @@ class Link extends React.Component
       Messenger.publish "label", null
 
 
+  allUnknown: (views) ->
+    _.every views, ({startAngle, endAngle}) -> startAngle is endAngle
+
   render: ->
+
 
     views = []
 
-    # Walk through each feature in the link
-    @props.model.get("features").map (feature) =>
+    try
 
-      # Get the view and model for the parent participant
-      {view: participantView, model: ParticipantModel} = @props.views[feature.get("participant").get("id")]
-
-      # Create a scale so we know where to start/stop our path
-      scale = Engine.scale([participantView.startAngle, participantView.endAngle],
-        [0, ParticipantModel.get("interactor").get("length")])
+      # Walk through each feature in the link
+      @props.model.get("features").map (feature) =>
 
 
-      # Walk through each sequenceData of the feature (could be more than one)
-      sequenceData = feature.get("sequenceData").map (s) ->
-        start = s.get("start")
-        end = s.get("start")
-        if start is null and end is null
-          halfway = (participantView.unknownStart + participantView.unknownEnd) / 2
-          views.push
-            radius: participantView.radius
-            startAngle: participantView.unknownStart
-            endAngle: participantView.unknownEnd
-        else
-          views.push
-            radius: participantView.radius
-            startAngle: scale.val s.get("start")
-            endAngle: scale.val s.get("end")
+        # Get the view and model for the parent participant
+        {view: participantView, model: ParticipantModel} = @props.views[feature.get("participant").get("id")]
 
+        # Create a scale so we know where to start/stop our path
+        scale = Engine.scale([participantView.startAngle, participantView.endAngle],
+          [0, ParticipantModel.get("interactor").get("length")])
+
+
+        # Walk through each sequenceData of the feature (could be more than one)
+
+        sequenceData = feature.get("sequenceData").map (s) ->
+          start = s.get("start")
+          end = s.get("start")
+          if start is null and end is null
+            halfway = (participantView.unknownStart + participantView.unknownEnd) / 2
+            views.push
+              radius: participantView.radius
+              startAngle: participantView.unknownStart + 2.5
+              endAngle: participantView.unknownStart + 2.5
+          else
+            views.push
+              radius: participantView.radius
+              startAngle: scale.val s.get("start")
+              endAngle: scale.val s.get("end")
+    catch error
+    finally
 
     parsed = null
     # parsed = parser Draw.link(views)
+
+    # if views.length is 1 then console.log "LINK VIEWS", Draw.selfBinding views[0]
+    isEmpty = @allUnknown views
+
+
+
 
     g
       key: @props.model.get("key")
@@ -112,12 +127,22 @@ class Link extends React.Component
       #       g {className: "x"},
       #         circle {cx: p.x, cy: p.y, r: 5 }
       #         text {dx: p.x + 15, dy: p.y + 15}, p.idx
-      path
-        className: "link"
-        opacity: "0.9"
-        # fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
-        fill: @props.model.get("fill")
-        d: Draw.link views
-        style: opacity: 0.8
+      if views.length is 1
+        path
+          className: "emptyLink selfLink"
+          opacity: "0.9"
+          fill: "none"
+          d: Draw.selfBinding views[0], 15
+      else
+        cn = "link"
+        if isEmpty then cn = "emptyLink"
+
+        path
+          className: cn
+          # opacity: "0.9"
+          # fill: if @props.model.get("focus") then "deepskyblue" else "#e5e5e5" # @props.view.fill
+          # fill: @props.model.get("fill")
+          d: Draw.link views
+
 
 module.exports = Link

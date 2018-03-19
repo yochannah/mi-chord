@@ -110,36 +110,51 @@ Link = (function(superClass) {
     }
   };
 
+  Link.prototype.allUnknown = function(views) {
+    return _.every(views, function(arg) {
+      var endAngle, startAngle;
+      startAngle = arg.startAngle, endAngle = arg.endAngle;
+      return startAngle === endAngle;
+    });
+  };
+
   Link.prototype.render = function() {
-    var parsed, views;
+    var cn, error, isEmpty, parsed, views;
     views = [];
-    this.props.model.get("features").map((function(_this) {
-      return function(feature) {
-        var ParticipantModel, participantView, ref1, scale, sequenceData;
-        ref1 = _this.props.views[feature.get("participant").get("id")], participantView = ref1.view, ParticipantModel = ref1.model;
-        scale = Engine.scale([participantView.startAngle, participantView.endAngle], [0, ParticipantModel.get("interactor").get("length")]);
-        return sequenceData = feature.get("sequenceData").map(function(s) {
-          var end, halfway, start;
-          start = s.get("start");
-          end = s.get("start");
-          if (start === null && end === null) {
-            halfway = (participantView.unknownStart + participantView.unknownEnd) / 2;
-            return views.push({
-              radius: participantView.radius,
-              startAngle: participantView.unknownStart,
-              endAngle: participantView.unknownEnd
-            });
-          } else {
-            return views.push({
-              radius: participantView.radius,
-              startAngle: scale.val(s.get("start")),
-              endAngle: scale.val(s.get("end"))
-            });
-          }
-        });
-      };
-    })(this));
+    try {
+      this.props.model.get("features").map((function(_this) {
+        return function(feature) {
+          var ParticipantModel, participantView, ref1, scale, sequenceData;
+          ref1 = _this.props.views[feature.get("participant").get("id")], participantView = ref1.view, ParticipantModel = ref1.model;
+          scale = Engine.scale([participantView.startAngle, participantView.endAngle], [0, ParticipantModel.get("interactor").get("length")]);
+          return sequenceData = feature.get("sequenceData").map(function(s) {
+            var end, halfway, start;
+            start = s.get("start");
+            end = s.get("start");
+            if (start === null && end === null) {
+              halfway = (participantView.unknownStart + participantView.unknownEnd) / 2;
+              return views.push({
+                radius: participantView.radius,
+                startAngle: participantView.unknownStart + 2.5,
+                endAngle: participantView.unknownStart + 2.5
+              });
+            } else {
+              return views.push({
+                radius: participantView.radius,
+                startAngle: scale.val(s.get("start")),
+                endAngle: scale.val(s.get("end"))
+              });
+            }
+          });
+        };
+      })(this));
+    } catch (error1) {
+      error = error1;
+    } finally {
+
+    }
     parsed = null;
+    isEmpty = this.allUnknown(views);
     return g({
       key: this.props.model.get("key"),
       className: "linkGroup",
@@ -153,15 +168,15 @@ Link = (function(superClass) {
           return _this.focusParticipants(false);
         };
       })(this)
-    }, path({
-      className: "link",
+    }, views.length === 1 ? path({
+      className: "emptyLink selfLink",
       opacity: "0.9",
-      fill: this.props.model.get("fill"),
-      d: Draw.link(views),
-      style: {
-        opacity: 0.8
-      }
-    }));
+      fill: "none",
+      d: Draw.selfBinding(views[0], 15)
+    }) : (cn = "link", isEmpty ? cn = "emptyLink" : void 0, path({
+      className: cn,
+      d: Draw.link(views)
+    })));
   };
 
   return Link;
@@ -238,29 +253,30 @@ Participant = (function(superClass) {
   };
 
   Participant.prototype.render = function() {
-    var Regions, cx, cy, ref1, t;
+    var Regions, cx, cy, mid, ref1, t;
     Regions = [];
     this.props.model.get("features").map((function(_this) {
       return function(f) {
         var ref1, scale;
         scale = Engine.scale([_this.props.view.startAngle, _this.props.view.endAngle], [0, _this.props.model.get("interactor").get("length")]);
         return (ref1 = f.get("sequenceData")) != null ? ref1.map(function(s) {
-          return Regions.push(Region({
-            model: s,
-            key: s.cid,
-            view: {
-              radius: _this.props.view.radius + 1,
-              startAngle: scale.val(s.get("start")),
-              endAngle: scale.val(s.get("end"))
-            }
-          }));
+          if (s.get("start") !== null && s.get("end") !== null) {
+            return Regions.push(Region({
+              model: s,
+              key: s.cid,
+              view: {
+                radius: _this.props.view.radius,
+                startAngle: scale.val(s.get("start")),
+                endAngle: scale.val(s.get("end"))
+              }
+            }));
+          }
         }) : void 0;
       };
     })(this));
     return g({
       key: this.props.model.get("key")
     }, this.props.view.hasLength === true ? g({}, path({
-      fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
       onMouseEnter: (function(_this) {
         return function() {
           return _this.focusMe(true);
@@ -271,35 +287,39 @@ Participant = (function(superClass) {
           return _this.focusMe(false);
         };
       })(this),
-      className: "participant",
+      className: "participant" + (this.props.model.get("focus") === true ? " focused" : ""),
       d: Draw.arc(this.props.view)
-    }), path({
-      fill: this.props.model.get("focus") === true ? "deepskyblue" : "#a8a8a8",
-      onMouseEnter: (function(_this) {
-        return function() {
-          return _this.focusMe(true);
-        };
-      })(this),
-      onMouseLeave: (function(_this) {
-        return function() {
-          return _this.focusMe(false);
-        };
-      })(this),
-      className: "participantUnknown",
-      d: Draw.arc2(this.props.view)
     })) : ((ref1 = ptc(this.props.view.radius, this.props.view.endAngle), cx = ref1.x, cy = ref1.y, ref1), circle({
       cx: cx,
       cy: cy,
       className: "nolenpart",
       r: 10
-    })), text({
+    })), mid = (this.props.view.endAngle + this.props.view.startAngle) / 2, text({
       className: "participantLabel",
+      x: Draw.center(this.props.view).x,
+      y: Draw.center(this.props.view).y,
+      textAnchor: mid <= 180 ? "start" : "end"
+    }, this.props.model.get("interactor").get("label")), text({
+      className: "length",
+      x: Draw.radial(this.props.view.startAngle, 156).x,
+      y: Draw.radial(this.props.view.startAngle, 156).y,
       textAnchor: "middle",
       alignmentBaseline: "middle"
-    }, React.createElement("textPath", {
-      xlinkHref: "#tp" + this.props.model.get("id"),
-      startOffset: "50%"
-    }, this.props.model.get("interactor").get("label"))), Regions, (function() {
+    }, 1), text({
+      className: "length",
+      x: Draw.radial(this.props.view.endAngle, 156).x,
+      y: Draw.radial(this.props.view.endAngle, 156).y,
+      textAnchor: "middle",
+      alignmentBaseline: "middle"
+    }, this.props.model.get("interactor").get("length")), path({
+      className: "tick",
+      d: Draw.line(this.props.view.startAngle, 150, 20),
+      pointerEvents: "none"
+    }), path({
+      className: "tick",
+      d: Draw.line(this.props.view.endAngle, 150, 20),
+      pointerEvents: "none"
+    }), Regions, (function() {
       var i, len, ref2, results;
       if (this.props.view.hasLength) {
         ref2 = Draw.ticks(this.props.view, 5);
@@ -342,11 +362,19 @@ Region = (function(superClass) {
   }
 
   Region.prototype.render = function() {
-    if (!isNaN(this.props.view.endAngle)) {
-      return path({
-        className: "region",
-        d: Draw.arc(this.props.view, 7)
-      });
+    var error;
+    try {
+      if (!isNaN(this.props.view.endAngle)) {
+        return path({
+          className: "region",
+          d: Draw.arc(this.props.view, 15)
+        });
+      }
+    } catch (error1) {
+      error = error1;
+      return console.log("Error rendering region", error);
+    } finally {
+      null;
     }
   };
 
@@ -450,48 +478,9 @@ SVG = (function(superClass) {
         d: Draw.textDef(v.view)
       });
     });
-    defpaths.push(radialGradient({
-      id: "rgrad",
-      cx: "50%",
-      cy: "50%",
-      r: "75%"
-    }, stop({
-      offset: "0%",
-      style: {
-        stopColor: "rgb(255,255,255)",
-        stopOpacity: 1
-      }
-    }), stop({
-      offset: "50%",
-      style: {
-        stopColor: "rgb(255,255,255)",
-        stopOpacity: 1
-      }
-    }), stop({
-      offset: "62%",
-      style: {
-        stopColor: "rgb(0,0,0)",
-        stopOpacity: 1
-      }
-    }), stop({
-      offset: "100%",
-      style: {
-        stopColor: "rgb(0,0,0)",
-        stopOpacity: 1
-      }
-    })));
-    defpaths.push(mask({
-      id: "fademask",
-      maskContentUnits: "objectBoundingBox"
-    }, rect({
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-      fill: "url(#rgrad)"
-    })));
     Participants = _.values(views).map(function(p) {
       p.model.set("key", interactionId + ":" + p.model.get("id"));
+      p.key = interactionId + ":" + p.model.get("id");
       return Participant(p);
     });
     Unknowns = _.values(views).map(function(p) {
@@ -501,10 +490,11 @@ SVG = (function(superClass) {
       }
     });
     Links = links.map(function(l, i) {
-      l.set("key", interactionId + ":" + l.get("id"));
+      l.set("link key", interactionId + ":" + l.get("id"));
       return Link({
         model: l,
-        views: views
+        views: views,
+        key: interactionId + ":" + l.get("id")
       });
     });
     return svg({
@@ -516,14 +506,14 @@ SVG = (function(superClass) {
         shapeRendering: "geometricPrecision"
       }
     }, g({
-      key: interactionId + ":links",
-      className: "participants"
-    }, Participants), g({
       className: "links",
       style: {
         transform: "translate(250px,250px)"
       }
-    }, Links), this.state.label != null ? Tooltip({
+    }, Links), g({
+      key: interactionId + ":links",
+      className: "participants"
+    }, Participants), this.state.label != null ? Tooltip({
       rootsvg: this.state.rootsvg,
       message: this.state.label,
       mouse: this.state.mouse
@@ -650,15 +640,13 @@ Unknown = (function(superClass) {
 
   Unknown.prototype.render = function() {
     var ref1, x, y;
-    ref1 = Draw.centerUnknown(this.props.view), x = ref1.x, y = ref1.y;
+    ref1 = Draw.startUnknown(this.props.view), x = ref1.x, y = ref1.y;
     return g({
       transform: "translate(250, 250)"
     }, g({
       transform: "translate(" + x + ", " + y + ")"
     }, text({
-      className: "unknownLabel",
-      textAnchor: "middle",
-      dy: "4"
+      className: "unknownLabel"
     }, "?")));
   };
 
@@ -681,7 +669,8 @@ Main = (function() {
   function Main(target, model) {
     console.log("Using model", model);
     ReactDOM.render(SVG({
-      model: model
+      model: model,
+      key: new Date().getTime()
     }), document.getElementById("target"));
   }
 
@@ -705,7 +694,7 @@ Draw = {
     var endAngle, innerEndX, innerEndY, innerStartX, innerStartY, largeArc, outerEndX, outerEndY, outerStartX, outerStartY, path, radius, ref, ref1, ref2, ref3, startAngle;
     startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
     if (thickness == null) {
-      thickness = 20;
+      thickness = 15;
     }
     ref = ptc(radius, startAngle), innerStartX = ref.x, innerStartY = ref.y;
     ref1 = ptc(radius, endAngle), innerEndX = ref1.x, innerEndY = ref1.y;
@@ -732,6 +721,13 @@ Draw = {
     }
     return ref = ptc(radius + 30, (startAngle + endAngle) / 2), x = ref.x, y = ref.y, ref;
   },
+  radial: function(angle, radius, thickness) {
+    var ref, x, y;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    return ref = ptc(radius + thickness, angle), x = ref.x, y = ref.y, ref;
+  },
   centerUnknown: function(arg, thickness) {
     var radius, ref, unknownEnd, unknownStart, x, y;
     unknownStart = arg.unknownStart, unknownEnd = arg.unknownEnd, radius = arg.radius;
@@ -739,6 +735,58 @@ Draw = {
       thickness = 20;
     }
     return ref = ptc(radius + 10, (unknownStart + unknownEnd) / 2), x = ref.x, y = ref.y, ref;
+  },
+  startUnknown: function(arg, thickness) {
+    var radius, ref, unknownEnd, unknownStart, x, y;
+    unknownStart = arg.unknownStart, unknownEnd = arg.unknownEnd, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    return ref = ptc(radius + 8, unknownStart + 2.5), x = ref.x, y = ref.y, ref;
+  },
+  selfBinding: function(arg, thickness) {
+    var endAngle, ex, ey, path, q1, q2, q3, q4, q5, q6, radius, ref, ref1, ref2, ref3, ref4, ref5, ref6, startAngle, x, x1, x2, y, y1, y2;
+    startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    ref = ptc(radius + thickness, startAngle + 2.5), x = ref.x, y = ref.y;
+    ref1 = ptc(radius + thickness, startAngle - 2.5), ex = ref1.x, ey = ref1.y;
+    ref2 = ptc(radius + thickness + 20, startAngle + 5), x1 = ref2.x, y1 = ref2.y;
+    ref3 = ptc(radius + thickness + 10, startAngle + 7), q1 = ref3.x, q2 = ref3.y;
+    ref4 = ptc(radius + thickness + 20, startAngle - 5), x2 = ref4.x, y2 = ref4.y;
+    ref5 = ptc(radius + thickness + 30, startAngle), q3 = ref5.x, q4 = ref5.y;
+    ref6 = ptc(radius + thickness + 10, startAngle - 7), q5 = ref6.x, q6 = ref6.y;
+    path = ["M", x, y, "Q", q1, q2, x1, y1, "Q", q3, q4, x2, y2, "Q", q5, q6, ex, ey];
+    return path.join(" ");
+  },
+  selfBinding234: function(arg, thickness) {
+    var cx1, cx3, cx5, cx7, cy1, cy4, cy6, cy8, endAngle, path, radius, ref, ref1, ref2, ref3, ref4, ref5, ref6, startAngle, x, x1, x2, y, y1, y2;
+    startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    ref = ptc(radius + thickness, startAngle), x = ref.x, y = ref.y;
+    ref1 = ptc(radius + thickness + 20, startAngle + 5), x1 = ref1.x, y1 = ref1.y;
+    ref2 = ptc(radius + thickness + 20, startAngle + 7), cx1 = ref2.x, cy1 = ref2.y;
+    ref3 = ptc(radius + thickness + 20, startAngle + 5), cx3 = ref3.x, cy4 = ref3.y;
+    ref4 = ptc(radius + thickness + 20, startAngle - 5), x2 = ref4.x, y2 = ref4.y;
+    ref5 = ptc(radius + thickness + 20, startAngle - 7), cx5 = ref5.x, cy6 = ref5.y;
+    ref6 = ptc(radius + thickness + 20, startAngle - 5), cx7 = ref6.x, cy8 = ref6.y;
+    path = ["M", x, y, "C", cx1, cy1, cx3, cy4, x1, y1, "C", cx5, cy6, cx7, cy8, x2, y2, "Z"];
+    return path.join(" ");
+  },
+  selfBindingOld: function(arg, thickness) {
+    var endAngle, path, radius, ref, ref1, ref2, startAngle, x, x1, x2, y, y1, y2;
+    startAngle = arg.startAngle, endAngle = arg.endAngle, radius = arg.radius;
+    if (thickness == null) {
+      thickness = 20;
+    }
+    ref = ptc(radius + thickness, startAngle), x = ref.x, y = ref.y;
+    ref1 = ptc(radius + thickness + 20, startAngle + 5), x1 = ref1.x, y1 = ref1.y;
+    ref2 = ptc(radius + thickness + 20, startAngle - 5), x2 = ref2.x, y2 = ref2.y;
+    path = ["M", x, y, "L", x1, y1, "L", x2, y2];
+    return path.join(" ");
   },
   ticks: function(arg, thickness) {
     var angle, buildLine, endAngle, j, radius, ref, ref1, results, startAngle;
@@ -754,10 +802,20 @@ Draw = {
       return [path.join(" ")];
     };
     results = [];
-    for (angle = j = ref = startAngle, ref1 = endAngle; j <= ref1; angle = j += 10) {
+    for (angle = j = ref = startAngle, ref1 = endAngle; j <= ref1; angle = j += 3) {
       results.push(buildLine(angle));
     }
     return results;
+  },
+  line: function(angle, radius, length) {
+    var endX, endY, path, ref, ref1, startX, startY;
+    if (length == null) {
+      length = 20;
+    }
+    ref = ptc(radius + 15, angle), startX = ref.x, startY = ref.y;
+    ref1 = ptc(radius + 20, angle), endX = ref1.x, endY = ref1.y;
+    path = ["M", startX, startY, "L", endX, endY];
+    return [path.join(" ")];
   },
   textDef: function(arg, thickness) {
     var endAngle, innerEndX, innerEndY, innerStartX, innerStartY, largeArc, path, radius, ref, ref1, startAngle;
@@ -775,9 +833,9 @@ Draw = {
   link: function(participants) {
     var depth, parts, pinch;
     pinch = function(start, end) {
-      return (end - start) * 0.4;
+      return (end - start) * 0;
     };
-    depth = 90;
+    depth = 30;
     parts = [];
     participants = _.sortBy(participants, "startAngle");
     participants.map((function(_this) {
@@ -804,7 +862,7 @@ wind = require('./utils').wind;
 
 Engine = {
   layout: function(participants) {
-    var lengths, molRadius, nolength, nolengthviews, questionMarkWidth, scale, sum, views, withlength;
+    var lengths, molRadius, nlviews, nolength, nolengthviews, questionMarkWidth, scale, sum, views, withlength;
     lengths = participants.map(function(p) {
       return p.get("interactor").get("length");
     });
@@ -819,7 +877,7 @@ Engine = {
       length = p.get("interactor").get("length");
       return length !== void 0 && length !== null;
     });
-    molRadius = 12;
+    molRadius = 14;
     sum = _.reduce(lengths, (function(total, num) {
       return total + num;
     }), 0);
@@ -827,48 +885,41 @@ Engine = {
     views = [];
     nolengthviews = [];
     questionMarkWidth = 3;
-    withlength.map(function(p, i) {
-      var previous;
-      previous = _.last(views);
-      if (previous) {
-        return views.push({
-          model: p,
-          view: {
-            hasLength: true,
-            radius: 200,
-            unknownStart: previous.view.endAngle + 3,
-            unknownEnd: previous.view.endAngle + 8,
-            startAngle: previous.view.endAngle + 8,
-            endAngle: (i = withlength.length - 1) ? (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3 : (scale.val(p.get("interactor").get("length"))) + previous.view.endAngle - 3
-          }
-        });
-      } else {
-        return views.push({
-          model: p,
-          view: {
-            unknownStart: 0,
-            unknownEnd: 5,
-            hasLength: true,
-            radius: 200,
-            startAngle: 5,
-            endAngle: scale.val(p.get("interactor").get("length"))
-          }
-        });
-      }
-    });
-    nolength.map(function(p, i) {
-      var previous;
-      previous = _.last(views);
-      return views.push({
-        model: p,
+    views = _.reduce(withlength, (function(total, next, memo) {
+      var previousLengths, v;
+      previousLengths = _.reduce(total, (function(count, p) {
+        return count + p.model.get("interactor").get("length");
+      }), 0);
+      v = {
+        model: next,
+        view: {
+          hasLength: true,
+          radius: 150,
+          unknownStart: scale.val(previousLengths) + 0,
+          unknownEnd: scale.val(previousLengths) + 5,
+          startAngle: scale.val(previousLengths) + 5,
+          endAngle: scale.val(next.get("interactor").get("length") + previousLengths) - 5
+        }
+      };
+      return total.concat([v]);
+    }), []);
+    nlviews = _.reduce(nolength, (function(total, next, memo) {
+      var previousParticipant, v;
+      previousParticipant = memo === 0 ? views[views.length - 1] : total[memo - 1];
+      v = {
+        model: next,
         view: {
           hasLength: false,
-          radius: 210,
-          startAngle: previous.view.endAngle + molRadius,
-          endAngle: previous.view.endAngle + molRadius
+          radius: 150 + molRadius / 2,
+          startAngle: previousParticipant.view.unknownEnd + 10,
+          endAngle: previousParticipant.view.unknownEnd + 12,
+          unknownStart: previousParticipant.view.unknownEnd + 10,
+          unknownEnd: previousParticipant.view.unknownEnd + 12
         }
-      });
-    });
+      };
+      return total.concat([v]);
+    }), []);
+    views = views.concat(nlviews);
     return wind(views, function(d) {
       return d.model.get("id");
     });

@@ -4,7 +4,7 @@ ptc = polarToCartesian
 
 Draw =
 
-  arc: ({startAngle, endAngle, radius}, thickness = 20) ->
+  arc: ({startAngle, endAngle, radius}, thickness = 15) ->
 
     # console.log "trying to arc", startAngle, endAngle, radius
 
@@ -33,8 +33,76 @@ Draw =
   center: ({startAngle, endAngle, radius}, thickness = 20) ->
     {x, y} = ptc radius + 30, (startAngle + endAngle) / 2
 
+  radial: (angle, radius, thickness = 20) ->
+    {x, y} = ptc radius + thickness, angle
+
   centerUnknown: ({unknownStart, unknownEnd, radius}, thickness = 20) ->
     {x, y} = ptc radius + 10, (unknownStart + unknownEnd) / 2
+
+  startUnknown: ({unknownStart, unknownEnd, radius}, thickness = 20) ->
+    {x, y} = ptc radius + 8, unknownStart + 2.5
+
+  selfBinding: ({startAngle, endAngle, radius}, thickness = 20) ->
+
+    {x, y} = ptc radius + thickness, startAngle + 2.5
+    {x: ex, y: ey} = ptc radius + thickness, startAngle - 2.5
+    {x: x1, y: y1} = ptc radius + thickness + 20, startAngle + 5
+    {x: q1, y: q2} = ptc radius + thickness + 10, startAngle + 7
+
+
+    {x: x2, y: y2} = ptc radius + thickness + 20, startAngle - 5
+
+    {x: q3, y: q4} = ptc radius + thickness + 30, startAngle
+
+    {x: q5, y: q6} = ptc radius + thickness + 10, startAngle - 7
+
+    path = [
+      "M", x, y
+      "Q", q1, q2, x1, y1
+      "Q", q3, q4, x2, y2
+      "Q", q5, q6, ex, ey]
+
+    path.join " "
+
+
+  selfBinding234: ({startAngle, endAngle, radius}, thickness = 20) ->
+
+    {x, y} = ptc radius + thickness, startAngle
+
+
+    {x: x1, y: y1} = ptc radius + thickness + 20, startAngle + 5
+    {x: cx1, y: cy1} = ptc radius + thickness + 20, startAngle + 7
+    {x: cx3, y: cy4} = ptc radius + thickness + 20, startAngle + 5
+
+
+
+    {x: x2, y: y2} = ptc radius + thickness + 20, startAngle - 5
+    {x: cx5, y: cy6} = ptc radius + thickness + 20, startAngle - 7
+    {x: cx7, y: cy8} = ptc radius + thickness + 20, startAngle - 5
+
+    path = [
+      "M", x, y
+      "C", cx1, cy1, cx3, cy4, x1, y1
+      "C", cx5, cy6, cx7, cy8, x2, y2
+      "Z"
+    ]
+
+    path.join " "
+
+
+  selfBindingOld: ({startAngle, endAngle, radius}, thickness = 20) ->
+
+    {x, y} = ptc radius + thickness, startAngle
+    {x: x1, y: y1} = ptc radius + thickness + 20, startAngle + 5
+    {x: x2, y: y2} = ptc radius + thickness + 20, startAngle - 5
+
+    path = [
+      "M", x, y
+      "L", x1, y1
+      "L", x2, y2
+    ]
+
+    path.join " "
 
 
   ticks: ({startAngle, endAngle, radius}, thickness = 20) ->
@@ -49,7 +117,17 @@ Draw =
       [path.join " "]
 
 
-    (buildLine angle for angle in [startAngle..endAngle] by 10)
+    (buildLine angle for angle in [startAngle..endAngle] by 3)
+
+  line: (angle, radius, length = 20) ->
+
+    {x: startX, y: startY} = ptc radius + 15, angle
+    {x: endX, y: endY} = ptc radius + 20, angle
+    path = [
+      "M", startX, startY
+      "L", endX, endY
+    ]
+    [path.join " "]
 
 
   textDef: ({startAngle, endAngle, radius}, thickness = 20) ->
@@ -74,9 +152,9 @@ Draw =
   link: (participants) ->
 
     pinch = (start, end) ->
-      (end - start) * 0.4
+      (end - start) * 0
 
-    depth = 90
+    depth = 30
 
     parts = []
 
