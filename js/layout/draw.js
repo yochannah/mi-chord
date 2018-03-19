@@ -150,7 +150,7 @@ Draw = {
   link: function(participants) {
     var depth, parts, pinch;
     pinch = function(start, end) {
-      return (end - start) * 0.2;
+      return (end - start) * 0;
     };
     depth = 30;
     parts = [];
