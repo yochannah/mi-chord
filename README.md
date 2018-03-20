@@ -11,6 +11,13 @@ MI-Chord uses `gulp` to compile itself
 npm install -g gulp
 ```
 
+Install dependencies 
+
+```bash
+npm install
+bower install
+```
+
 To build the project and watch for changes, use the default gulp task:
 ```bash
 gulp
